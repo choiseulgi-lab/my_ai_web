@@ -28,9 +28,7 @@ function MenuSection() {
 
   return (
     <Box sx={{ mb: 6 }}>
-      <Typography variant="h2" sx={{ mb: 3 }}>Menu</Typography>
-
-      <Typography variant="h6" sx={{ mb: 2 }}>Dropdown Menu</Typography>
+<Typography variant="h6" sx={{ mb: 2 }}>Dropdown Menu</Typography>
       <Button variant="contained" onClick={handleOpen}>
         메뉴 열기
       </Button>

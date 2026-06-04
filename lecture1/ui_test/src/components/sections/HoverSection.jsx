@@ -67,9 +67,7 @@ const HOVER_CARDS = [
 function HoverSection() {
   return (
     <Box sx={{ mb: 6 }}>
-      <Typography variant="h2" sx={{ mb: 3 }}>Hover</Typography>
-
-      <Typography variant="h6" sx={{ mb: 2 }}>호버 효과 카드</Typography>
+<Typography variant="h6" sx={{ mb: 2 }}>호버 효과 카드</Typography>
       <Stack direction="row" flexWrap="wrap" gap={2}>
         {HOVER_CARDS.map((card) => (
           <Paper

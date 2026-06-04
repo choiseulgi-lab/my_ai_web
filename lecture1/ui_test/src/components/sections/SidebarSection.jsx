@@ -28,9 +28,7 @@ function SidebarSection() {
 
   return (
     <Box sx={{ mb: 6 }}>
-      <Typography variant="h2" sx={{ mb: 3 }}>Sidebar</Typography>
-
-      <Typography variant="h6" sx={{ mb: 1 }}>위치 선택</Typography>
+<Typography variant="h6" sx={{ mb: 1 }}>위치 선택</Typography>
       <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 3 }}>
         <ToggleButtonGroup
           value={anchor}

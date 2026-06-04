@@ -5,11 +5,11 @@ import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 
 const SLIDES = [
-  { label: 'Slide 1', color: '#1976d2' },
-  { label: 'Slide 2', color: '#dc004e' },
-  { label: 'Slide 3', color: '#2e7d32' },
-  { label: 'Slide 4', color: '#ed6c02' },
-  { label: 'Slide 5', color: '#7b1fa2' },
+  { label: 'Slide 1', color: '#1976d2', img: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=900&h=240&fit=crop' },
+  { label: 'Slide 2', color: '#dc004e', img: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=900&h=240&fit=crop' },
+  { label: 'Slide 3', color: '#2e7d32', img: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=900&h=240&fit=crop' },
+  { label: 'Slide 4', color: '#ed6c02', img: 'https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=900&h=240&fit=crop' },
+  { label: 'Slide 5', color: '#7b1fa2', img: 'https://images.unsplash.com/photo-1527477396000-e27163b481c2?w=900&h=240&fit=crop' },
 ]
 
 function SwipeSection() {
@@ -26,9 +26,7 @@ function SwipeSection() {
 
   return (
     <Box sx={{ mb: 6 }}>
-      <Typography variant="h2" sx={{ mb: 3 }}>Swipe</Typography>
-
-      <Typography variant="h6" sx={{ mb: 2 }}>이미지 슬라이더 (스와이프 / 버튼)</Typography>
+<Typography variant="h6" sx={{ mb: 2 }}>이미지 슬라이더 (스와이프 / 버튼)</Typography>
 
       {/* 슬라이드 영역 */}
       <Box
@@ -39,6 +37,9 @@ function SwipeSection() {
           borderRadius: 2,
           overflow: 'hidden',
           bgcolor: SLIDES[index].color,
+          backgroundImage: SLIDES[index].img ? `url(${SLIDES[index].img})` : 'none',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -47,7 +48,9 @@ function SwipeSection() {
           transition: 'background-color 0.4s',
         }}
       >
-        <Typography variant="h3" color="white">{SLIDES[index].label}</Typography>
+        {SLIDES[index].img && (
+          <Box sx={{ position: 'absolute', inset: 0, bgcolor: 'rgba(0,0,0,0.35)' }} />
+        )}
 
         {/* 이전 버튼 */}
         <IconButton

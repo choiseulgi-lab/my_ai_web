@@ -12,9 +12,7 @@ function NavigationSection() {
 
   return (
     <Box sx={{ mb: 6 }}>
-      <Typography variant="h2" sx={{ mb: 3 }}>Navigation</Typography>
-
-      <AppBar position="static">
+<AppBar position="static">
         <Toolbar>
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
             Logo

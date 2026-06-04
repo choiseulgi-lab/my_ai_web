@@ -22,9 +22,7 @@ function AnimationSection() {
   return (
     <Box sx={{ mb: 6 }}>
       <style>{bounceKeyframes}</style>
-      <Typography variant="h2" sx={{ mb: 3 }}>Animation</Typography>
-
-      {/* Fade */}
+{/* Fade */}
       <Typography variant="h6" sx={{ mb: 1 }}>Fade</Typography>
       <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
         <Button variant="outlined" onClick={() => setFadeIn((prev) => !prev)}>

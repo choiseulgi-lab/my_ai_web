@@ -9,22 +9,24 @@ import MenuSection from './components/sections/MenuSection'
 import SidebarSection from './components/sections/SidebarSection'
 import HoverSection from './components/sections/HoverSection'
 import SwipeSection from './components/sections/SwipeSection'
+import CardSection from './components/sections/CardSection'
 
 function App() {
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
       <Container maxWidth="lg">
         <Box sx={{ py: 6 }}>
+          <NavigationSection />
+          <SwipeSection />
+          <CardSection />
           <ButtonSection />
           <InputSection />
-          <NavigationSection />
           <DropdownSection />
           <ScrollSection />
           <AnimationSection />
           <MenuSection />
           <SidebarSection />
           <HoverSection />
-          <SwipeSection />
         </Box>
       </Container>
     </Box>

@@ -3,9 +3,7 @@ import { Box, Button, Typography, Stack, Divider } from '@mui/material'
 function ButtonSection() {
   return (
     <Box sx={{ mb: 6 }}>
-      <Typography variant="h2" sx={{ mb: 3 }}>Button</Typography>
-
-      <Typography variant="h6" sx={{ mb: 1 }}>Variant</Typography>
+<Typography variant="h6" sx={{ mb: 1 }}>Variant</Typography>
       <Stack direction="row" spacing={2} sx={{ mb: 3 }}>
         <Button variant="contained">Contained</Button>
         <Button variant="outlined">Outlined</Button>

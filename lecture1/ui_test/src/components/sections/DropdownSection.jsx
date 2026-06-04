@@ -10,9 +10,7 @@ function DropdownSection() {
 
   return (
     <Box sx={{ mb: 6 }}>
-      <Typography variant="h2" sx={{ mb: 3 }}>Dropdown</Typography>
-
-      <Typography variant="h6" sx={{ mb: 2 }}>Select</Typography>
+<Typography variant="h6" sx={{ mb: 2 }}>Select</Typography>
       <Stack direction="row" spacing={3} sx={{ mb: 3 }}>
         <FormControl sx={{ minWidth: 160 }}>
           <InputLabel>과일 선택</InputLabel>
