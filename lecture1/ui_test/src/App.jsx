@@ -10,12 +10,16 @@ import SidebarSection from './components/sections/SidebarSection'
 import HoverSection from './components/sections/HoverSection'
 import SwipeSection from './components/sections/SwipeSection'
 import CardSection from './components/sections/CardSection'
+import FlexNavSection from './components/sections/FlexNavSection'
+import CgvNavSection from './components/sections/CgvNavSection'
 
 function App() {
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
       <Container maxWidth="lg">
         <Box sx={{ py: 6 }}>
+          <FlexNavSection />
+          <CgvNavSection />
           <NavigationSection />
           <SwipeSection />
           <CardSection />

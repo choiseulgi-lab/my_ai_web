@@ -26,3 +26,6 @@ dist/
 Thumbs.db
 .vscode/
 .idea/
+
+# 독립 레포 (별도 GitHub 저장소로 관리)
+my-portfolio/
