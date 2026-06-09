@@ -149,7 +149,8 @@ function PostDetailPage() {
   if (pageLoading) return <Box sx={{ display: 'flex', justifyContent: 'center', pt: 8 }}><CircularProgress /></Box>
   if (!post) return <Container sx={{ py: 4 }}><Alert severity="error">게시물을 찾을 수 없어요.</Alert></Container>
 
-  const imageUrl = post.image_url || `${RANDOM_IMAGE_API}/${post.id}/600/400`
+  const seed = parseInt(post.id.replace(/-/g, '').substring(0, 8), 16) % 1000
+  const imageUrl = post.image_url || `${RANDOM_IMAGE_API}?lock=${seed}`
   const tags = post.post_tags?.map(pt => pt.tags?.name).filter(Boolean) ?? []
   const isAuthor = user?.id === post.user_id
 

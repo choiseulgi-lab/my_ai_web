@@ -67,7 +67,7 @@ function WritePostPage() {
 
   const handleRandomImage = () => {
     const seed = Math.floor(Math.random() * 1000)
-    setForm(prev => ({ ...prev, image_url: `${RANDOM_IMAGE_API}/${seed}/600/400` }))
+    setForm(prev => ({ ...prev, image_url: `${RANDOM_IMAGE_API}?lock=${seed}` }))
   }
 
   const handleSubmit = async (isDraft = false) => {

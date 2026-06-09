@@ -16,7 +16,8 @@ const CATEGORY_COLORS = {
 
 function PostCard({ post, isLiked, isBookmarked, onLike, onBookmark }) {
   const navigate = useNavigate()
-  const imageUrl = post.image_url || `${RANDOM_IMAGE_API}/${post.id}/760/480`
+  const seed = parseInt(post.id.replace(/-/g, '').substring(0, 8), 16) % 1000
+  const imageUrl = post.image_url || `${RANDOM_IMAGE_API}?lock=${seed}`
   const tags = post.post_tags?.map(pt => pt.tags?.name).filter(Boolean) ?? []
 
   const handleLike = (e) => { e.stopPropagation(); onLike?.(post.id, isLiked) }

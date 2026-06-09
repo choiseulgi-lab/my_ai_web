@@ -14,4 +14,4 @@ export const RATING_LABELS = {
   5: '최고예요!'
 }
 
-export const RANDOM_IMAGE_API = 'https://picsum.photos/seed'
+export const RANDOM_IMAGE_API = 'https://loremflickr.com/600/400/food,restaurant,meal'
