@@ -1,8 +1,11 @@
-import { AppBar, Toolbar, Button, Box, IconButton, Avatar, Typography, InputBase } from '@mui/material'
+import { useState } from 'react'
+import { AppBar, Toolbar, Button, Box, IconButton, Avatar, Typography, InputBase, Menu, MenuItem, Divider, ListItemIcon } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
 import AddIcon from '@mui/icons-material/Add'
 import SearchIcon from '@mui/icons-material/Search'
+import LogoutIcon from '@mui/icons-material/Logout'
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline'
 
 function Logo({ onClick }) {
   return (
@@ -20,8 +23,13 @@ function Logo({ onClick }) {
 function Header({ onSearch, searchValue, onSearchChange }) {
   const navigate = useNavigate()
   const { user, profile, signOut } = useAuth()
+  const [anchorEl, setAnchorEl] = useState(null)
+
+  const handleMenuOpen = (e) => setAnchorEl(e.currentTarget)
+  const handleMenuClose = () => setAnchorEl(null)
 
   const handleSignOut = async () => {
+    handleMenuClose()
     await signOut()
     navigate('/login')
   }
@@ -57,11 +65,6 @@ function Header({ onSearch, searchValue, onSearchChange }) {
 
         {/* 우측 영역 */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, ml: 'auto' }}>
-          {user && profile && (
-            <Typography variant="body2" color="text.secondary" sx={{ display: { xs: 'none', md: 'block' }, whiteSpace: 'nowrap' }}>
-              <Typography component="span" color="primary" fontWeight={700}>{profile.nickname}</Typography>님
-            </Typography>
-          )}
           {user ? (
             <>
               <Button
@@ -73,12 +76,47 @@ function Header({ onSearch, searchValue, onSearchChange }) {
               >
                 글쓰기
               </Button>
-              <Avatar
-                sx={{ width: 32, height: 32, bgcolor: 'primary.main', fontSize: '0.875rem', cursor: 'pointer', fontWeight: 700 }}
-                onClick={handleSignOut}
+
+              {/* 프로필 아바타 → 메뉴 */}
+              <Box
+                onClick={handleMenuOpen}
+                sx={{ display: 'flex', alignItems: 'center', gap: 0.75, cursor: 'pointer',
+                  px: 1, py: 0.5, borderRadius: 20,
+                  '&:hover': { bgcolor: 'grey.100' }, transition: 'background 0.15s'
+                }}
               >
-                {profile?.nickname?.[0] ?? '?'}
-              </Avatar>
+                <Avatar sx={{ width: 30, height: 30, bgcolor: 'primary.main', fontSize: '0.8rem', fontWeight: 700 }}>
+                  {profile?.nickname?.[0] ?? '?'}
+                </Avatar>
+                <Typography variant="body2" fontWeight={600} sx={{ display: { xs: 'none', sm: 'block' } }}>
+                  {profile?.nickname}
+                </Typography>
+              </Box>
+
+              {/* 드롭다운 메뉴 */}
+              <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleMenuClose}
+                transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                PaperProps={{
+                  elevation: 3,
+                  sx: { mt: 0.5, minWidth: 160, borderRadius: 2 }
+                }}
+              >
+                <Box sx={{ px: 2, py: 1.5 }}>
+                  <Typography variant="body2" fontWeight={700}>{profile?.nickname}</Typography>
+                  <Typography variant="caption" color="text.secondary">@{profile?.username}</Typography>
+                </Box>
+                <Divider />
+                <MenuItem onClick={handleSignOut} sx={{ gap: 1.5, color: 'error.main', py: 1.25 }}>
+                  <ListItemIcon sx={{ minWidth: 'auto' }}>
+                    <LogoutIcon fontSize="small" sx={{ color: 'error.main' }} />
+                  </ListItemIcon>
+                  로그아웃
+                </MenuItem>
+              </Menu>
             </>
           ) : (
             <Button variant="contained" size="small" onClick={() => navigate('/login')} sx={{ borderRadius: 20, px: 2 }}>
