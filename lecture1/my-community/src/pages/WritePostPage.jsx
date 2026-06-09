@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import {
   Box, Container, Typography, TextField, Button,
-  Checkbox, FormControlLabel, Grid, Alert, Divider, Chip, ToggleButton, ToggleButtonGroup
+  Grid, Alert, Divider, Chip, ToggleButton, ToggleButtonGroup, CircularProgress, LinearProgress
 } from '@mui/material'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
@@ -9,6 +9,8 @@ import { usePosts } from '../hooks/usePosts'
 import { supabase } from '../lib/supabase'
 import RatingStars from '../components/common/RatingStars'
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate'
+import ShuffleIcon from '@mui/icons-material/Shuffle'
+import DeleteIcon from '@mui/icons-material/Delete'
 import { RANDOM_IMAGE_API } from '../constants'
 
 const CATEGORIES = ['한식', '중식', '일식', '카페', '술집', '기타']
@@ -35,6 +37,8 @@ function WritePostPage() {
   const [form, setForm] = useState(EMPTY_FORM)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [uploading, setUploading] = useState(false)
+  const fileInputRef = useRef(null)
   const isEdit = !!editId
 
   useEffect(() => {
@@ -68,6 +72,37 @@ function WritePostPage() {
   const handleRandomImage = () => {
     const seed = Math.floor(Math.random() * 9999)
     setForm(prev => ({ ...prev, image_url: `${RANDOM_IMAGE_API}?lock=${seed}&t=${Date.now()}` }))
+  }
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    if (file.size > 5 * 1024 * 1024) {
+      setError('이미지 크기는 5MB 이하여야 해요.')
+      return
+    }
+
+    setUploading(true)
+    setError('')
+
+    const ext = file.name.split('.').pop()
+    const fileName = `${user.id}/${Date.now()}.${ext}`
+
+    const { data, error: uploadError } = await supabase.storage
+      .from('post-images')
+      .upload(fileName, file, { upsert: true })
+
+    if (uploadError) {
+      setError('이미지 업로드에 실패했어요. 다시 시도해주세요.')
+    } else {
+      const { data: { publicUrl } } = supabase.storage
+        .from('post-images')
+        .getPublicUrl(data.path)
+      setForm(prev => ({ ...prev, image_url: publicUrl }))
+    }
+    setUploading(false)
+    e.target.value = ''
   }
 
   const handleRemoveImage = () => {
@@ -145,57 +180,109 @@ function WritePostPage() {
 
           <Divider>이미지</Divider>
 
+          {/* 숨겨진 파일 input */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/gif"
+            style={{ display: 'none' }}
+            onChange={handleFileUpload}
+          />
+
           <Box>
-            {form.image_url ? (
-              <Box sx={{ position: 'relative', borderRadius: 2, overflow: 'hidden', mb: 1 }}>
+            {/* 업로드 중 */}
+            {uploading && (
+              <Box sx={{ mb: 1 }}>
+                <Typography variant="caption" color="text.secondary" mb={0.5} display="block">
+                  이미지 업로드 중...
+                </Typography>
+                <LinearProgress color="primary" />
+              </Box>
+            )}
+
+            {/* 이미지 미리보기 */}
+            {form.image_url && !uploading && (
+              <Box sx={{ position: 'relative', borderRadius: 2, overflow: 'hidden', mb: 1.5 }}>
                 <Box
                   component="img"
                   src={form.image_url}
                   alt="미리보기"
-                  sx={{ width: '100%', height: 220, objectFit: 'cover', display: 'block' }}
+                  sx={{ width: '100%', height: 240, objectFit: 'cover', display: 'block' }}
                 />
-                {/* 이미지 위 오버레이 버튼 */}
                 <Box sx={{
                   position: 'absolute', bottom: 0, left: 0, right: 0,
                   display: 'flex', gap: 1, p: 1.5,
-                  background: 'linear-gradient(transparent, rgba(0,0,0,0.55))',
+                  background: 'linear-gradient(transparent, rgba(0,0,0,0.6))',
                 }}>
                   <Button
-                    size="small" variant="contained"
+                    size="small"
                     startIcon={<AddPhotoAlternateIcon />}
-                    onClick={handleRandomImage}
-                    sx={{ flex: 1, bgcolor: 'rgba(255,255,255,0.9)', color: 'text.primary', '&:hover': { bgcolor: 'white' } }}
+                    onClick={() => fileInputRef.current?.click()}
+                    sx={{ flex: 1, bgcolor: 'rgba(255,255,255,0.9)', color: 'text.primary', '&:hover': { bgcolor: 'white' }, fontSize: '0.75rem' }}
                   >
-                    다른 사진으로
+                    다른 사진 업로드
                   </Button>
                   <Button
-                    size="small" variant="contained" color="error"
+                    size="small"
+                    startIcon={<ShuffleIcon />}
+                    onClick={handleRandomImage}
+                    sx={{ flex: 1, bgcolor: 'rgba(255,255,255,0.9)', color: 'text.primary', '&:hover': { bgcolor: 'white' }, fontSize: '0.75rem' }}
+                  >
+                    랜덤으로 변경
+                  </Button>
+                  <Button
+                    size="small"
+                    startIcon={<DeleteIcon />}
                     onClick={handleRemoveImage}
-                    sx={{ bgcolor: 'rgba(211,47,47,0.85)', '&:hover': { bgcolor: 'error.main' } }}
+                    sx={{ bgcolor: 'rgba(211,47,47,0.85)', color: 'white', '&:hover': { bgcolor: 'error.main' }, fontSize: '0.75rem' }}
                   >
                     삭제
                   </Button>
                 </Box>
               </Box>
-            ) : (
-              <Box
-                onClick={handleRandomImage}
-                sx={{
-                  width: '100%', height: 180, border: '2px dashed', borderColor: 'grey.300',
-                  borderRadius: 2, display: 'flex', flexDirection: 'column',
-                  alignItems: 'center', justifyContent: 'center', gap: 1,
-                  cursor: 'pointer', bgcolor: 'grey.50',
-                  '&:hover': { borderColor: 'primary.main', bgcolor: 'primary.50' },
-                  transition: 'all 0.2s',
-                }}
-              >
-                <AddPhotoAlternateIcon sx={{ fontSize: 40, color: 'grey.400' }} />
-                <Typography variant="body2" color="text.secondary" fontWeight={600}>
-                  클릭하면 음식 사진이 랜덤으로 추가돼요
-                </Typography>
-                <Typography variant="caption" color="text.disabled">
-                  버튼을 누를 때마다 새로운 사진으로 바뀌어요
-                </Typography>
+            )}
+
+            {/* 이미지 없을 때 - 업로드 영역 */}
+            {!form.image_url && !uploading && (
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+                {/* 직접 업로드 */}
+                <Box
+                  onClick={() => fileInputRef.current?.click()}
+                  sx={{
+                    width: '100%', height: 160, border: '2px dashed', borderColor: 'primary.light',
+                    borderRadius: 2, display: 'flex', flexDirection: 'column',
+                    alignItems: 'center', justifyContent: 'center', gap: 1,
+                    cursor: 'pointer', bgcolor: 'primary.50',
+                    '&:hover': { borderColor: 'primary.main', bgcolor: '#fce4ec' },
+                    transition: 'all 0.2s',
+                  }}
+                >
+                  <AddPhotoAlternateIcon sx={{ fontSize: 36, color: 'primary.main' }} />
+                  <Typography variant="body2" color="primary" fontWeight={700}>
+                    사진 직접 업로드
+                  </Typography>
+                  <Typography variant="caption" color="text.disabled">
+                    JPG, PNG, WEBP · 최대 5MB
+                  </Typography>
+                </Box>
+
+                {/* 구분선 */}
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Box sx={{ flex: 1, height: 1, bgcolor: 'divider' }} />
+                  <Typography variant="caption" color="text.disabled">또는</Typography>
+                  <Box sx={{ flex: 1, height: 1, bgcolor: 'divider' }} />
+                </Box>
+
+                {/* 랜덤 이미지 */}
+                <Button
+                  variant="outlined"
+                  startIcon={<ShuffleIcon />}
+                  onClick={handleRandomImage}
+                  fullWidth
+                  sx={{ py: 1.2 }}
+                >
+                  랜덤 음식 사진 추가
+                </Button>
               </Box>
             )}
           </Box>
