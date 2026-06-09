@@ -50,7 +50,14 @@ function SignUpPage() {
     setLoading(true)
     const { error } = await signUp({ username: form.username, password: form.password, nickname: form.nickname })
     if (error) {
-      setErrors({ general: error.message })
+      const msg = error.message
+      if (msg.includes('rate limit')) {
+        setErrors({ general: '잠시 후 다시 시도해주세요. (1분 후 재시도)' })
+      } else if (msg.includes('already registered') || msg.includes('already exists')) {
+        setErrors({ username: '이미 사용 중인 아이디입니다.' })
+      } else {
+        setErrors({ general: msg })
+      }
     } else {
       navigate('/')
     }
