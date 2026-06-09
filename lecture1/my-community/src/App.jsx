@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './hooks/useAuth'
 import Header from './components/layout/Header'
@@ -17,13 +18,25 @@ function ProtectedRoute({ children }) {
 
 function AppLayout() {
   const { loading } = useAuth()
+  const [searchInput, setSearchInput] = useState('')
+  const [search, setSearch] = useState('')
+
   if (loading) return <Box sx={{ display: 'flex', justifyContent: 'center', pt: 8 }}><CircularProgress color="primary" /></Box>
+
+  const handleSearch = (e) => {
+    e.preventDefault()
+    setSearch(searchInput)
+  }
 
   return (
     <>
-      <Header />
+      <Header
+        searchValue={searchInput}
+        onSearchChange={e => setSearchInput(e.target.value)}
+        onSearch={handleSearch}
+      />
       <Routes>
-        <Route path="/" element={<FeedPage />} />
+        <Route path="/" element={<FeedPage search={search} />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/post/:id" element={<PostDetailPage />} />
