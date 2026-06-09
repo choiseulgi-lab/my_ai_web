@@ -6,22 +6,13 @@ import SearchIcon from '@mui/icons-material/Search'
 
 function Logo({ onClick }) {
   return (
-    <Box onClick={onClick} sx={{ display: 'flex', alignItems: 'center', gap: 1, cursor: 'pointer', userSelect: 'none', flexShrink: 0 }}>
-      <Box sx={{
-        width: 38, height: 38, borderRadius: '50%', bgcolor: 'primary.main',
-        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-      }}>
-        <Typography sx={{ fontSize: 8, fontWeight: 900, color: 'white', lineHeight: 1.2, letterSpacing: 0.5 }}>THE</Typography>
-        <Typography sx={{ fontSize: 8, fontWeight: 900, color: 'white', lineHeight: 1.2, letterSpacing: 0.5 }}>MAT</Typography>
-      </Box>
-      <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-        <Typography sx={{ fontSize: '1.1rem', fontWeight: 900, lineHeight: 1, letterSpacing: '-0.5px', color: 'primary.main' }}>
-          THEMAT
-        </Typography>
-        <Typography sx={{ fontSize: '0.55rem', fontWeight: 500, color: 'text.secondary', letterSpacing: '1px' }}>
-          맛집 커뮤니티
-        </Typography>
-      </Box>
+    <Box onClick={onClick} sx={{ cursor: 'pointer', userSelect: 'none', flexShrink: 0, display: 'flex', alignItems: 'center' }}>
+      <Box
+        component="img"
+        src={`${import.meta.env.BASE_URL}thematlogo.png`}
+        alt="THEMAT"
+        sx={{ height: 40, width: 'auto', objectFit: 'contain' }}
+      />
     </Box>
   )
 }
