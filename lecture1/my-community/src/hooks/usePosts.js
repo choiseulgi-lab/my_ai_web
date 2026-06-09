@@ -56,7 +56,8 @@ export function usePosts() {
   }
 
   const updatePost = async (postId, postData) => {
-    const { tags, ...rest } = postData
+    // JOIN으로 붙은 필드(profiles, post_tags)와 읽기전용 필드 제거
+    const { tags, profiles, post_tags, id, user_id, created_at, updated_at, like_count, ...rest } = postData
     const { data, error } = await supabase
       .from('posts')
       .update(rest)
