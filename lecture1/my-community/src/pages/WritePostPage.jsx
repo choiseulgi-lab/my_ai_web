@@ -66,8 +66,12 @@ function WritePostPage() {
   }
 
   const handleRandomImage = () => {
-    const seed = Math.floor(Math.random() * 1000)
-    setForm(prev => ({ ...prev, image_url: `${RANDOM_IMAGE_API}?lock=${seed}` }))
+    const seed = Math.floor(Math.random() * 9999)
+    setForm(prev => ({ ...prev, image_url: `${RANDOM_IMAGE_API}?lock=${seed}&t=${Date.now()}` }))
+  }
+
+  const handleRemoveImage = () => {
+    setForm(prev => ({ ...prev, image_url: '' }))
   }
 
   const handleSubmit = async (isDraft = false) => {
@@ -142,22 +146,58 @@ function WritePostPage() {
           <Divider>이미지</Divider>
 
           <Box>
-            {form.image_url && (
+            {form.image_url ? (
+              <Box sx={{ position: 'relative', borderRadius: 2, overflow: 'hidden', mb: 1 }}>
+                <Box
+                  component="img"
+                  src={form.image_url}
+                  alt="미리보기"
+                  sx={{ width: '100%', height: 220, objectFit: 'cover', display: 'block' }}
+                />
+                {/* 이미지 위 오버레이 버튼 */}
+                <Box sx={{
+                  position: 'absolute', bottom: 0, left: 0, right: 0,
+                  display: 'flex', gap: 1, p: 1.5,
+                  background: 'linear-gradient(transparent, rgba(0,0,0,0.55))',
+                }}>
+                  <Button
+                    size="small" variant="contained"
+                    startIcon={<AddPhotoAlternateIcon />}
+                    onClick={handleRandomImage}
+                    sx={{ flex: 1, bgcolor: 'rgba(255,255,255,0.9)', color: 'text.primary', '&:hover': { bgcolor: 'white' } }}
+                  >
+                    다른 사진으로
+                  </Button>
+                  <Button
+                    size="small" variant="contained" color="error"
+                    onClick={handleRemoveImage}
+                    sx={{ bgcolor: 'rgba(211,47,47,0.85)', '&:hover': { bgcolor: 'error.main' } }}
+                  >
+                    삭제
+                  </Button>
+                </Box>
+              </Box>
+            ) : (
               <Box
-                component="img"
-                src={form.image_url}
-                alt="미리보기"
-                sx={{ width: '100%', height: 200, objectFit: 'cover', borderRadius: 2, mb: 1 }}
-              />
+                onClick={handleRandomImage}
+                sx={{
+                  width: '100%', height: 180, border: '2px dashed', borderColor: 'grey.300',
+                  borderRadius: 2, display: 'flex', flexDirection: 'column',
+                  alignItems: 'center', justifyContent: 'center', gap: 1,
+                  cursor: 'pointer', bgcolor: 'grey.50',
+                  '&:hover': { borderColor: 'primary.main', bgcolor: 'primary.50' },
+                  transition: 'all 0.2s',
+                }}
+              >
+                <AddPhotoAlternateIcon sx={{ fontSize: 40, color: 'grey.400' }} />
+                <Typography variant="body2" color="text.secondary" fontWeight={600}>
+                  클릭하면 음식 사진이 랜덤으로 추가돼요
+                </Typography>
+                <Typography variant="caption" color="text.disabled">
+                  버튼을 누를 때마다 새로운 사진으로 바뀌어요
+                </Typography>
+              </Box>
             )}
-            <Button
-              variant="outlined"
-              startIcon={<AddPhotoAlternateIcon />}
-              onClick={handleRandomImage}
-              fullWidth
-            >
-              랜덤 이미지 추가
-            </Button>
           </Box>
 
           <Divider>태그</Divider>
