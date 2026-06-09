@@ -31,7 +31,12 @@ function PostCard({ post, isLiked, isBookmarked, onLike, onBookmark }) {
       <CardMedia component="img" height={220} image={imageUrl} alt={post.title} sx={{ objectFit: 'cover' }} />
 
       <CardContent sx={{ pb: 1 }}>
-        <Typography variant="h6" fontWeight={700} noWrap>{post.title}</Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 0.5 }}>
+          {post.category && post.category !== '기타' && (
+            <Chip label={post.category} size="small" color="primary" sx={{ fontSize: '0.65rem', height: 18 }} />
+          )}
+          <Typography variant="h6" fontWeight={700} noWrap sx={{ flex: 1 }}>{post.title}</Typography>
+        </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: 0.5 }}>
           {post.store_name && (

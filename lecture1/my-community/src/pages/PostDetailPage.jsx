@@ -69,7 +69,7 @@ function PostDetailPage() {
   const { id: postId } = useParams()
   const navigate = useNavigate()
   const { user, profile } = useAuth()
-  const { fetchPost, deletePost, toggleLike, getUserLikes, toggleBookmark, getUserBookmarks } = usePosts()
+  const { fetchPost, deletePost, toggleLike, getUserLikes, toggleBookmark, getUserBookmarks, incrementViewCount } = usePosts()
   const { comments, loading: commentsLoading, fetchComments, addComment, deleteComment, toggleCommentLike, getUserCommentLikes } = useComments(postId)
 
   const [post, setPost] = useState(null)
@@ -86,6 +86,7 @@ function PostDetailPage() {
       const { data } = await fetchPost(postId)
       setPost(data)
       setPageLoading(false)
+      incrementViewCount(postId)
     }
     load()
     fetchComments()

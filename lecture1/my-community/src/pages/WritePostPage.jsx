@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import {
   Box, Container, Typography, TextField, Button,
-  Checkbox, FormControlLabel, Grid, Alert, Divider, Chip
+  Checkbox, FormControlLabel, Grid, Alert, Divider, Chip, ToggleButton, ToggleButtonGroup
 } from '@mui/material'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
@@ -10,6 +10,8 @@ import { supabase } from '../lib/supabase'
 import RatingStars from '../components/common/RatingStars'
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate'
 import { RANDOM_IMAGE_API } from '../constants'
+
+const CATEGORIES = ['한식', '중식', '일식', '카페', '술집', '기타']
 
 const TAGS_LIST = [
   { id: 1, name: '#혼밥추천' }, { id: 2, name: '#데이트' }, { id: 3, name: '#주차가능' },
@@ -22,7 +24,7 @@ const EMPTY_FORM = {
   title: '', store_name: '', region: '', address: '',
   main_menu: '', review: '', recommended_menu: '',
   atmosphere: '', tip: '', rating: 0, image_url: '',
-  is_draft: false, tags: []
+  is_draft: false, tags: [], category: '기타'
 }
 
 function WritePostPage() {
@@ -95,6 +97,21 @@ function WritePostPage() {
 
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
           <TextField label="제목 *" name="title" value={form.title} onChange={handleChange} />
+
+          <Divider>카테고리</Divider>
+
+          <ToggleButtonGroup
+            value={form.category}
+            exclusive
+            onChange={(_, v) => v && setForm(prev => ({ ...prev, category: v }))}
+            sx={{ flexWrap: 'wrap', gap: 0.5 }}
+          >
+            {CATEGORIES.map(cat => (
+              <ToggleButton key={cat} value={cat} sx={{ px: 2, py: 0.5, borderRadius: '20px !important', fontSize: '0.85rem', border: '1px solid !important', borderColor: 'divider !important' }}>
+                {cat}
+              </ToggleButton>
+            ))}
+          </ToggleButtonGroup>
 
           <Divider>맛집 정보</Divider>
 

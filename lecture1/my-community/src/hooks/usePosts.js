@@ -13,14 +13,32 @@ export function usePosts() {
   const [hasMore, setHasMore] = useState(true)
   const PAGE_SIZE = 10
 
-  const fetchPosts = useCallback(async (offset = 0) => {
+  const fetchPosts = useCallback(async (offset = 0, { search = '', category = '', sort = 'latest' } = {}) => {
     setLoading(true)
-    const { data, error } = await supabase
+
+    let query = supabase
       .from('posts')
       .select(POST_SELECT)
       .eq('is_draft', false)
-      .order('created_at', { ascending: false })
-      .range(offset, offset + PAGE_SIZE - 1)
+
+    // 카테고리 필터
+    if (category) query = query.eq('category', category)
+
+    // 검색 (제목, 상호명, 지역, 대표메뉴)
+    if (search.trim()) {
+      query = query.or(
+        `title.ilike.%${search}%,store_name.ilike.%${search}%,region.ilike.%${search}%,main_menu.ilike.%${search}%`
+      )
+    }
+
+    // 정렬
+    if (sort === 'popular') query = query.order('like_count', { ascending: false })
+    else if (sort === 'views') query = query.order('view_count', { ascending: false })
+    else query = query.order('created_at', { ascending: false })
+
+    query = query.range(offset, offset + PAGE_SIZE - 1)
+
+    const { data, error } = await query
 
     if (!error && data) {
       if (offset === 0) setPosts(data)
@@ -40,6 +58,10 @@ export function usePosts() {
     return { data, error }
   }
 
+  const incrementViewCount = async (postId) => {
+    await supabase.rpc('increment_view_count', { post_id: postId })
+  }
+
   const createPost = async (postData, userId) => {
     const { tags, ...rest } = postData
     const { data, error } = await supabase
@@ -56,8 +78,7 @@ export function usePosts() {
   }
 
   const updatePost = async (postId, postData) => {
-    // JOIN으로 붙은 필드(profiles, post_tags)와 읽기전용 필드 제거
-    const { tags, profiles, post_tags, id, user_id, created_at, updated_at, like_count, ...rest } = postData
+    const { tags, profiles, post_tags, id, user_id, created_at, updated_at, like_count, view_count, ...rest } = postData
     const { data, error } = await supabase
       .from('posts')
       .update(rest)
@@ -90,10 +111,7 @@ export function usePosts() {
   }
 
   const getUserLikes = async (userId) => {
-    const { data } = await supabase
-      .from('likes')
-      .select('post_id')
-      .eq('user_id', userId)
+    const { data } = await supabase.from('likes').select('post_id').eq('user_id', userId)
     return data?.map(l => l.post_id) ?? []
   }
 
@@ -106,16 +124,13 @@ export function usePosts() {
   }
 
   const getUserBookmarks = async (userId) => {
-    const { data } = await supabase
-      .from('bookmarks')
-      .select('post_id')
-      .eq('user_id', userId)
+    const { data } = await supabase.from('bookmarks').select('post_id').eq('user_id', userId)
     return data?.map(b => b.post_id) ?? []
   }
 
   return {
     posts, loading, hasMore,
-    fetchPosts, fetchPost,
+    fetchPosts, fetchPost, incrementViewCount,
     createPost, updatePost, deletePost,
     toggleLike, getUserLikes,
     toggleBookmark, getUserBookmarks
