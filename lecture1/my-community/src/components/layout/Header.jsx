@@ -11,7 +11,7 @@ function Logo({ onClick }) {
         component="img"
         src={`${import.meta.env.BASE_URL}thematlogo.png`}
         alt="THEMAT"
-        sx={{ height: 40, width: 'auto', objectFit: 'contain' }}
+        sx={{ height: 36, width: 'auto', objectFit: 'contain' }}
       />
     </Box>
   )
