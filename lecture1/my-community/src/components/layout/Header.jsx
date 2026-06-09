@@ -5,7 +5,6 @@ import { useAuth } from '../../hooks/useAuth'
 import AddIcon from '@mui/icons-material/Add'
 import SearchIcon from '@mui/icons-material/Search'
 import LogoutIcon from '@mui/icons-material/Logout'
-import PersonOutlineIcon from '@mui/icons-material/PersonOutline'
 
 function Logo({ onClick }) {
   return (
