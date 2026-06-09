@@ -35,15 +35,23 @@ function LoginPage() {
     <Container maxWidth="xs">
       <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', py: 4 }}>
         {/* 로고 */}
-        <Box sx={{ textAlign: 'center', mb: 5 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 5, gap: 1.5 }}>
           <Box sx={{
-            width: 80, height: 80, borderRadius: '50%', bgcolor: 'primary.main',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', mx: 'auto', mb: 2
+            width: 72, height: 72, borderRadius: '50%', bgcolor: 'primary.main',
+            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+            border: '3px solid', borderColor: 'primary.dark',
           }}>
-            <Typography variant="h4" color="white" fontWeight={900}>T</Typography>
+            <Typography sx={{ fontSize: 13, fontWeight: 900, color: 'white', lineHeight: 1.2, letterSpacing: 1 }}>THE</Typography>
+            <Typography sx={{ fontSize: 13, fontWeight: 900, color: 'white', lineHeight: 1.2, letterSpacing: 1 }}>MAT</Typography>
           </Box>
-          <Typography variant="h4" fontWeight={900} color="primary" letterSpacing={-1}>THEMAT</Typography>
-          <Typography variant="body2" color="text.secondary" mt={0.5}>맛집 정보 공유 커뮤니티</Typography>
+          <Box sx={{ textAlign: 'center' }}>
+            <Typography sx={{ fontSize: '1.75rem', fontWeight: 900, color: 'primary.main', letterSpacing: '-1px', lineHeight: 1 }}>
+              THEMAT
+            </Typography>
+            <Typography variant="caption" color="text.secondary" sx={{ letterSpacing: '2px', fontSize: '0.65rem' }}>
+              맛집 정보 공유 커뮤니티
+            </Typography>
+          </Box>
         </Box>
 
         <Typography variant="h5" fontWeight={700} mb={3}>로그인</Typography>
