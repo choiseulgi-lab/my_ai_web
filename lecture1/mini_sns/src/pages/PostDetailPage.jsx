@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import {
   Box, Typography, Avatar, IconButton, CircularProgress,
   SwipeableDrawer, TextField, Button, Divider,
-  Dialog, DialogTitle, DialogActions,
+  Dialog, DialogTitle, DialogActions, Tooltip,
 } from '@mui/material'
 import {
   ArrowBackIosNew as ArrowBackIosNewIcon,
@@ -11,6 +11,8 @@ import {
   ModeCommentOutlined as ChatBubbleOutlineIcon,
   LocationOnOutlined as LocationOnOutlinedIcon,
   Close as CloseIcon,
+  EditOutlined as EditOutlinedIcon,
+  DeleteOutlined as DeleteOutlinedIcon,
 } from '@mui/icons-material'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../supabaseClient.js'
@@ -116,24 +118,17 @@ function PostDetailPage() {
         </IconButton>
         <Typography variant="h6" sx={{ ml: 1, flex: 1 }}>게시물</Typography>
         {isMyPost && (
-          <Box sx={{ display: 'flex', gap: 0.5, mr: 0.5 }}>
-            <Button
-              size="small"
-              variant="outlined"
-              onClick={() => navigate(`/edit/${id}`)}
-              sx={{ minWidth: 0, px: 1.5, py: 0.4, fontSize: '0.8rem', borderRadius: 2 }}
-            >
-              수정
-            </Button>
-            <Button
-              size="small"
-              variant="outlined"
-              color="error"
-              onClick={() => setIsDeleteDialogOpen(true)}
-              sx={{ minWidth: 0, px: 1.5, py: 0.4, fontSize: '0.8rem', borderRadius: 2 }}
-            >
-              삭제
-            </Button>
+          <Box sx={{ display: 'flex' }}>
+            <Tooltip title="수정">
+              <IconButton onClick={() => navigate(`/edit/${id}`)} sx={{ color: 'text.secondary' }}>
+                <EditOutlinedIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="삭제">
+              <IconButton onClick={() => setIsDeleteDialogOpen(true)} sx={{ color: 'error.main' }}>
+                <DeleteOutlinedIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
           </Box>
         )}
       </Box>

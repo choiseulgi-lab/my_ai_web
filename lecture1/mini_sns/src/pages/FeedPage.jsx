@@ -44,10 +44,6 @@ function FeedPage() {
     )
   }
 
-  const handleDelete = (postId) => {
-    setPosts(prev => prev.filter(p => p.id !== postId))
-  }
-
   return (
     <PageLayout>
       {isLoading ? (
@@ -67,7 +63,7 @@ function FeedPage() {
       ) : (
         <Box sx={{ pt: 1.5 }}>
           {posts.map(post => (
-            <PostCard key={post.id} post={post} onLikeUpdate={handleLikeUpdate} onDelete={handleDelete} />
+            <PostCard key={post.id} post={post} onLikeUpdate={handleLikeUpdate} />
           ))}
         </Box>
       )}
