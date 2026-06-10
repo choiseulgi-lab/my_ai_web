@@ -16,6 +16,7 @@ function BottomNav() {
     const path = location.pathname
     if (path === '/') return 0
     if (path === '/group') return 1
+    if (path.startsWith('/chat')) return 3
     if (path === '/mypage') return 4
     return -1
   }
@@ -56,7 +57,8 @@ function BottomNav() {
           <BottomNavigationAction
             label="채팅"
             icon={<ChatBubbleOutlineIcon />}
-            sx={{ color: 'text.secondary', cursor: 'default' }}
+            onClick={() => navigate('/chat')}
+            sx={{ '&.Mui-selected': { color: 'primary.main' } }}
           />
           <BottomNavigationAction
             label="마이"

@@ -6,6 +6,8 @@ import FeedPage from './pages/FeedPage.jsx'
 import PostDetailPage from './pages/PostDetailPage.jsx'
 import PostCreatePage from './pages/PostCreatePage.jsx'
 import TravelGroupPage from './pages/TravelGroupPage.jsx'
+import ChatListPage from './pages/ChatListPage.jsx'
+import ChatRoomPage from './pages/ChatRoomPage.jsx'
 import MyPage from './pages/MyPage.jsx'
 
 function PrivateRoute({ children }) {
@@ -24,6 +26,8 @@ function App() {
         <Route path="/create" element={<PrivateRoute><PostCreatePage /></PrivateRoute>} />
         <Route path="/edit/:id" element={<PrivateRoute><PostCreatePage /></PrivateRoute>} />
         <Route path="/group" element={<PrivateRoute><TravelGroupPage /></PrivateRoute>} />
+        <Route path="/chat" element={<PrivateRoute><ChatListPage /></PrivateRoute>} />
+        <Route path="/chat/:id" element={<PrivateRoute><ChatRoomPage /></PrivateRoute>} />
         <Route path="/mypage" element={<PrivateRoute><MyPage /></PrivateRoute>} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
