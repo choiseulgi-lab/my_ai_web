@@ -22,6 +22,7 @@ function App() {
         <Route path="/" element={<PrivateRoute><FeedPage /></PrivateRoute>} />
         <Route path="/post/:id" element={<PrivateRoute><PostDetailPage /></PrivateRoute>} />
         <Route path="/create" element={<PrivateRoute><PostCreatePage /></PrivateRoute>} />
+        <Route path="/edit/:id" element={<PrivateRoute><PostCreatePage /></PrivateRoute>} />
         <Route path="/group" element={<PrivateRoute><TravelGroupPage /></PrivateRoute>} />
         <Route path="/mypage" element={<PrivateRoute><MyPage /></PrivateRoute>} />
         <Route path="*" element={<Navigate to="/" replace />} />
