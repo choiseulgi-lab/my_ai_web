@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import {
   Box, Typography, Avatar, IconButton, CircularProgress,
   SwipeableDrawer, TextField, Button, Divider,
-  Menu, MenuItem, Dialog, DialogTitle, DialogActions,
+  Dialog, DialogTitle, DialogActions,
 } from '@mui/material'
 import {
   ArrowBackIosNew as ArrowBackIosNewIcon,
@@ -11,7 +11,6 @@ import {
   ModeCommentOutlined as ChatBubbleOutlineIcon,
   LocationOnOutlined as LocationOnOutlinedIcon,
   Close as CloseIcon,
-  MoreVert as MoreVertIcon,
 } from '@mui/icons-material'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../supabaseClient.js'
@@ -29,7 +28,6 @@ function PostDetailPage() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [newComment, setNewComment] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [anchorEl, setAnchorEl] = useState(null)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
 
   useEffect(() => {
@@ -118,9 +116,25 @@ function PostDetailPage() {
         </IconButton>
         <Typography variant="h6" sx={{ ml: 1, flex: 1 }}>게시물</Typography>
         {isMyPost && (
-          <IconButton size="small" onClick={(e) => setAnchorEl(e.currentTarget)} sx={{ color: 'text.secondary' }}>
-            <MoreVertIcon fontSize="small" />
-          </IconButton>
+          <Box sx={{ display: 'flex', gap: 0.5, mr: 0.5 }}>
+            <Button
+              size="small"
+              variant="outlined"
+              onClick={() => navigate(`/edit/${id}`)}
+              sx={{ minWidth: 0, px: 1.5, py: 0.4, fontSize: '0.8rem', borderRadius: 2 }}
+            >
+              수정
+            </Button>
+            <Button
+              size="small"
+              variant="outlined"
+              color="error"
+              onClick={() => setIsDeleteDialogOpen(true)}
+              sx={{ minWidth: 0, px: 1.5, py: 0.4, fontSize: '0.8rem', borderRadius: 2 }}
+            >
+              삭제
+            </Button>
+          </Box>
         )}
       </Box>
 
@@ -164,14 +178,6 @@ function PostDetailPage() {
           </Typography>
         </Box>
       </Box>
-
-      {/* ⋮ 메뉴 */}
-      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
-        <MenuItem onClick={() => { setAnchorEl(null); navigate(`/edit/${id}`) }}>수정</MenuItem>
-        <MenuItem onClick={() => { setAnchorEl(null); setIsDeleteDialogOpen(true) }} sx={{ color: 'error.main' }}>
-          삭제
-        </MenuItem>
-      </Menu>
 
       {/* 삭제 확인 다이얼로그 */}
       <Dialog open={isDeleteDialogOpen} onClose={() => setIsDeleteDialogOpen(false)}>

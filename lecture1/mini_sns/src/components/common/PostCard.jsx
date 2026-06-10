@@ -1,10 +1,9 @@
-import { Box, Typography, Avatar, IconButton, Menu, MenuItem, Dialog, DialogTitle, DialogActions, Button } from '@mui/material'
+import { Box, Typography, Avatar, IconButton, Dialog, DialogTitle, DialogActions, Button } from '@mui/material'
 import {
   FavoriteBorder as FavoriteBorderIcon,
   Favorite as FavoriteIcon,
   ModeCommentOutlined as ChatBubbleOutlineIcon,
   LocationOnOutlined as LocationOnOutlinedIcon,
-  MoreVert as MoreVertIcon,
 } from '@mui/icons-material'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -14,7 +13,6 @@ import { formatDistanceToNow } from '../../utils/formatTime.js'
 
 function PostCard({ post, onLikeUpdate, onDelete }) {
   const [liked, setLiked] = useState(false)
-  const [anchorEl, setAnchorEl] = useState(null)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const navigate = useNavigate()
   const { currentUser } = useAuth()
@@ -30,19 +28,8 @@ function PostCard({ post, onLikeUpdate, onDelete }) {
     if (onLikeUpdate) onLikeUpdate(post.id, newCount)
   }
 
-  const handleMenuOpen = (e) => {
-    e.stopPropagation()
-    setAnchorEl(e.currentTarget)
-  }
-
-  const handleMenuClose = (e) => {
-    e?.stopPropagation()
-    setAnchorEl(null)
-  }
-
   const handleEdit = (e) => {
     e.stopPropagation()
-    handleMenuClose()
     navigate(`/edit/${post.id}`)
   }
 
@@ -57,7 +44,7 @@ function PostCard({ post, onLikeUpdate, onDelete }) {
       sx={{ bgcolor: 'background.paper', mb: 1, cursor: 'pointer' }}
       onClick={() => navigate(`/post/${post.id}`)}
     >
-      {/* 상단: 프로필 + 지역 + 메뉴 */}
+      {/* 상단: 프로필 + 지역 + 수정/삭제 버튼 */}
       <Box sx={{ display: 'flex', alignItems: 'center', px: 2, py: 1.5, gap: 1.5 }}>
         <Avatar
           src={post.dorun_users?.profile_image_url}
@@ -77,9 +64,25 @@ function PostCard({ post, onLikeUpdate, onDelete }) {
           </Box>
         </Box>
         {isMyPost && (
-          <IconButton size="small" onClick={handleMenuOpen} sx={{ color: 'text.secondary' }}>
-            <MoreVertIcon fontSize="small" />
-          </IconButton>
+          <Box sx={{ display: 'flex', gap: 0.5 }} onClick={(e) => e.stopPropagation()}>
+            <Button
+              size="small"
+              variant="outlined"
+              onClick={handleEdit}
+              sx={{ minWidth: 0, px: 1.2, py: 0.3, fontSize: '0.72rem', borderRadius: 2, lineHeight: 1.4 }}
+            >
+              수정
+            </Button>
+            <Button
+              size="small"
+              variant="outlined"
+              color="error"
+              onClick={(e) => { e.stopPropagation(); setIsDeleteDialogOpen(true) }}
+              sx={{ minWidth: 0, px: 1.2, py: 0.3, fontSize: '0.72rem', borderRadius: 2, lineHeight: 1.4 }}
+            >
+              삭제
+            </Button>
+          </Box>
         )}
       </Box>
 
@@ -127,25 +130,12 @@ function PostCard({ post, onLikeUpdate, onDelete }) {
         </Typography>
       </Box>
 
-      {/* ⋮ 드롭다운 메뉴 */}
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleMenuClose}
+      {/* 삭제 확인 다이얼로그 */}
+      <Dialog
+        open={isDeleteDialogOpen}
+        onClose={(e) => { e?.stopPropagation(); setIsDeleteDialogOpen(false) }}
         onClick={(e) => e.stopPropagation()}
       >
-        <MenuItem onClick={handleEdit}>수정</MenuItem>
-        <MenuItem
-          onClick={(e) => { e.stopPropagation(); handleMenuClose(); setIsDeleteDialogOpen(true) }}
-          sx={{ color: 'error.main' }}
-        >
-          삭제
-        </MenuItem>
-      </Menu>
-
-      {/* 삭제 확인 다이얼로그 */}
-      <Dialog open={isDeleteDialogOpen} onClose={(e) => { e?.stopPropagation(); setIsDeleteDialogOpen(false) }}
-        onClick={(e) => e.stopPropagation()}>
         <DialogTitle>게시물을 삭제할까요?</DialogTitle>
         <DialogActions>
           <Button onClick={(e) => { e.stopPropagation(); setIsDeleteDialogOpen(false) }}>취소</Button>
