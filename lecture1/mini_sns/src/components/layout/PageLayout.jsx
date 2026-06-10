@@ -6,8 +6,6 @@ function PageLayout({ children }) {
   return (
     <Box
       sx={{
-        maxWidth: 480,
-        mx: 'auto',
         minHeight: '100vh',
         bgcolor: 'background.default',
         position: 'relative',
