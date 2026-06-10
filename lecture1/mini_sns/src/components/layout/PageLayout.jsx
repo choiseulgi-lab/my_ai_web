@@ -14,7 +14,7 @@ function PageLayout({ children }) {
       }}
     >
       <TopBar />
-      <Box sx={{ pt: '56px', pb: '72px' }}>
+      <Box sx={{ pt: '56px', pb: '80px' }}>
         {children}
       </Box>
       <BottomNav />

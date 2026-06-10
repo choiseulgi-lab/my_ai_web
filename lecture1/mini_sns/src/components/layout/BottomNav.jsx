@@ -31,22 +31,22 @@ function BottomNav() {
         borderTop: '1px solid',
         borderColor: 'divider',
         zIndex: 1200,
-        maxWidth: 480,
-        mx: 'auto',
       }}
     >
       <Box sx={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
         <BottomNavigation
           value={getTabValue()}
-          showLabels={false}
-          sx={{ width: '100%', height: 60, bgcolor: 'background.paper' }}
+          showLabels
+          sx={{ width: '100%', height: 64, bgcolor: 'background.paper' }}
         >
           <BottomNavigationAction
+            label="홈"
             icon={<HomeOutlinedIcon />}
             onClick={() => navigate('/')}
             sx={{ '&.Mui-selected': { color: 'primary.main' } }}
           />
           <BottomNavigationAction
+            label="모임"
             icon={<GroupsOutlinedIcon />}
             onClick={() => navigate('/group')}
             sx={{ '&.Mui-selected': { color: 'primary.main' } }}
@@ -54,10 +54,12 @@ function BottomNav() {
           {/* 중앙 FAB 자리 */}
           <BottomNavigationAction disabled sx={{ visibility: 'hidden' }} />
           <BottomNavigationAction
+            label="채팅"
             icon={<ChatBubbleOutlineIcon />}
             sx={{ color: 'text.secondary', cursor: 'default' }}
           />
           <BottomNavigationAction
+            label="마이"
             icon={<PersonOutlineIcon />}
             onClick={() => navigate('/mypage')}
             sx={{ '&.Mui-selected': { color: 'primary.main' } }}
