@@ -41,19 +41,19 @@ function PostCard({ post, onLikeUpdate, onDelete }) {
 
   return (
     <Box
-      sx={{ bgcolor: 'background.paper', mb: 1, cursor: 'pointer' }}
+      sx={{ bgcolor: 'background.paper', mb: 2.5, cursor: 'pointer' }}
       onClick={() => navigate(`/post/${post.id}`)}
     >
       {/* 상단: 프로필 + 지역 + 수정/삭제 버튼 */}
-      <Box sx={{ display: 'flex', alignItems: 'center', px: 2, py: 1.5, gap: 1.5 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', px: 2.5, py: 2, gap: 1.5 }}>
         <Avatar
           src={post.dorun_users?.profile_image_url}
-          sx={{ width: 40, height: 40, bgcolor: 'primary.light' }}
+          sx={{ width: 44, height: 44, bgcolor: 'primary.light' }}
         >
           {post.dorun_users?.nickname?.[0]}
         </Avatar>
         <Box sx={{ flex: 1 }}>
-          <Typography variant="body2" fontWeight={600}>
+          <Typography variant="body2" fontWeight={600} sx={{ mb: 0.2 }}>
             {post.dorun_users?.nickname || '여행자'}
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.3 }}>
@@ -66,17 +66,13 @@ function PostCard({ post, onLikeUpdate, onDelete }) {
         {isMyPost && (
           <Box sx={{ display: 'flex', gap: 0.5 }} onClick={(e) => e.stopPropagation()}>
             <Button
-              size="small"
-              variant="outlined"
-              onClick={handleEdit}
+              size="small" variant="outlined" onClick={handleEdit}
               sx={{ minWidth: 0, px: 1.2, py: 0.3, fontSize: '0.72rem', borderRadius: 2, lineHeight: 1.4 }}
             >
               수정
             </Button>
             <Button
-              size="small"
-              variant="outlined"
-              color="error"
+              size="small" variant="outlined" color="error"
               onClick={(e) => { e.stopPropagation(); setIsDeleteDialogOpen(true) }}
               sx={{ minWidth: 0, px: 1.2, py: 0.3, fontSize: '0.72rem', borderRadius: 2, lineHeight: 1.4 }}
             >
@@ -95,37 +91,44 @@ function PostCard({ post, onLikeUpdate, onDelete }) {
         onError={(e) => { e.target.src = 'https://picsum.photos/400/400?random=' + post.id }}
       />
 
-      {/* 하단: 좋아요, 댓글, 시간 */}
-      <Box sx={{ px: 2, py: 1 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+      {/* 하단: 좋아요, 댓글, 내용 */}
+      <Box sx={{ px: 2.5, pt: 1.5, pb: 2 }}>
+        {/* 액션 버튼 */}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
           <IconButton size="small" onClick={handleLike} sx={{ p: 0.5, color: liked ? 'error.main' : 'text.secondary' }}>
             {liked ? <FavoriteIcon fontSize="small" /> : <FavoriteBorderIcon fontSize="small" />}
           </IconButton>
-          <Typography variant="caption" color="text.secondary">
+          <Typography variant="body2" color="text.secondary">
             {(post.likes_count || 0) + (liked ? 1 : 0)}
           </Typography>
           <IconButton size="small" sx={{ p: 0.5, color: 'text.secondary' }}>
             <ChatBubbleOutlineIcon fontSize="small" />
           </IconButton>
-          <Typography variant="caption" color="text.secondary">
+          <Typography variant="body2" color="text.secondary">
             {post.comment_count || 0}
           </Typography>
         </Box>
-        <Typography variant="body2" fontWeight={600} sx={{ mb: 0.3 }}>{post.travel_title}</Typography>
+
+        {/* 텍스트 내용 */}
+        <Typography variant="body2" fontWeight={700} sx={{ mb: 0.5 }}>
+          {post.travel_title}
+        </Typography>
         {post.caption && (
           <Typography
-            variant="body2" color="text.secondary"
-            sx={{ overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}
+            variant="body2" color="text.secondary" sx={{ mb: 0.5, lineHeight: 1.6,
+              overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box',
+              WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
+            }}
           >
             {post.caption}
           </Typography>
         )}
         {post.hashtag && (
-          <Typography variant="caption" color="primary.main" sx={{ mt: 0.3, display: 'block' }}>
+          <Typography variant="caption" color="primary.main" sx={{ mb: 0.5, display: 'block' }}>
             {post.hashtag}
           </Typography>
         )}
-        <Typography variant="caption" color="text.disabled" sx={{ mt: 0.5, display: 'block' }}>
+        <Typography variant="caption" color="text.disabled">
           {formatDistanceToNow(post.created_at)}
         </Typography>
       </Box>

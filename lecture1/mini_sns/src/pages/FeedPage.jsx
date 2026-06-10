@@ -65,9 +65,11 @@ function FeedPage() {
           </Typography>
         </Box>
       ) : (
-        posts.map(post => (
-          <PostCard key={post.id} post={post} onLikeUpdate={handleLikeUpdate} onDelete={handleDelete} />
-        ))
+        <Box sx={{ pt: 1.5 }}>
+          {posts.map(post => (
+            <PostCard key={post.id} post={post} onLikeUpdate={handleLikeUpdate} onDelete={handleDelete} />
+          ))}
+        </Box>
       )}
     </PageLayout>
   )
