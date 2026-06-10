@@ -61,7 +61,7 @@ function LoginPage() {
           variant="h1"
           sx={{ color: 'primary.main', fontWeight: 700, fontSize: '3rem', mb: 0.5 }}
         >
-          ✈️ Dorun
+          Dorun
         </Typography>
         <Typography variant="body2" color="text.secondary">
           여행 기록 & 경험 공유 SNS

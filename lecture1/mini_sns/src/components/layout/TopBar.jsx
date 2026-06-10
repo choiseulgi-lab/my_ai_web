@@ -23,7 +23,7 @@ function TopBar() {
             letterSpacing: '-0.5px',
           }}
         >
-          ✈️ Dorun
+          Dorun
         </Typography>
         <IconButton size="small" sx={{ color: 'text.secondary' }}>
           <NotificationsOutlinedIcon />
