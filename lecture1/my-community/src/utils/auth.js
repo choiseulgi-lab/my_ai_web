@@ -2,6 +2,9 @@ import { FAKE_EMAIL_DOMAIN } from '../constants'
 
 export const toEmail = (username) => `${username}${FAKE_EMAIL_DOMAIN}`
 
+export const getAvatarUrl = (userId) =>
+  `https://api.dicebear.com/9.x/adventurer/svg?seed=${encodeURIComponent(userId ?? 'default')}`
+
 export const fromEmail = (email) => email?.replace(FAKE_EMAIL_DOMAIN, '') ?? ''
 
 export const formatDate = (dateStr) => {

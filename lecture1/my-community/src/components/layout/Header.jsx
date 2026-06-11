@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { AppBar, Toolbar, Button, Box, IconButton, Avatar, Typography, InputBase, Menu, MenuItem, Divider, ListItemIcon } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
+import { getAvatarUrl } from '../../utils/auth'
 import AddIcon from '@mui/icons-material/Add'
 import SearchIcon from '@mui/icons-material/Search'
 import LogoutIcon from '@mui/icons-material/Logout'
@@ -84,7 +85,10 @@ function Header({ onSearch, searchValue, onSearchChange }) {
                   '&:hover': { bgcolor: 'grey.100' }, transition: 'background 0.15s'
                 }}
               >
-                <Avatar sx={{ width: 30, height: 30, bgcolor: 'primary.main', fontSize: '0.8rem', fontWeight: 700 }}>
+                <Avatar
+                  src={user?.id ? getAvatarUrl(user.id) : undefined}
+                  sx={{ width: 30, height: 30, bgcolor: 'primary.main', fontSize: '0.8rem', fontWeight: 700 }}
+                >
                   {profile?.nickname?.[0] ?? '?'}
                 </Avatar>
                 <Typography variant="body2" fontWeight={600} sx={{ display: { xs: 'none', sm: 'block' } }}>

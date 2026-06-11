@@ -9,7 +9,7 @@ import { useAuth } from '../hooks/useAuth'
 import { usePosts } from '../hooks/usePosts'
 import { useComments } from '../hooks/useComments'
 import RatingStars from '../components/common/RatingStars'
-import { formatDate } from '../utils/auth'
+import { formatDate, getAvatarUrl } from '../utils/auth'
 import { RANDOM_IMAGE_API } from '../constants'
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
@@ -37,7 +37,10 @@ function CommentContent({ comment, user, onDelete, onLike, isLiked, onReply, isR
     <Box sx={{ py: 1.5 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Avatar sx={{ width: 28, height: 28, bgcolor: 'primary.light', fontSize: '0.75rem' }}>
+          <Avatar
+            src={comment.user_id ? getAvatarUrl(comment.user_id) : undefined}
+            sx={{ width: 28, height: 28, bgcolor: 'primary.light', fontSize: '0.75rem' }}
+          >
             {comment.profiles?.nickname?.[0] ?? '?'}
           </Avatar>
           <Typography variant="body2" fontWeight={600}>{comment.profiles?.nickname}</Typography>
@@ -209,7 +212,10 @@ function PostDetailPage() {
 
       {/* 작성자 정보 */}
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 2 }}>
-        <Avatar sx={{ width: 32, height: 32, bgcolor: 'primary.main', fontSize: '0.875rem' }}>
+        <Avatar
+          src={post.user_id ? getAvatarUrl(post.user_id) : undefined}
+          sx={{ width: 32, height: 32, bgcolor: 'primary.main', fontSize: '0.875rem' }}
+        >
           {post.profiles?.nickname?.[0] ?? '?'}
         </Avatar>
         <Box>

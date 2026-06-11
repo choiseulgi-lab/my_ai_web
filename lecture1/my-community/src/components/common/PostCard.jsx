@@ -6,7 +6,7 @@ import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder'
 import StarIcon from '@mui/icons-material/Star'
 import ModeCommentOutlinedIcon from '@mui/icons-material/ModeCommentOutlined'
 import { useNavigate } from 'react-router-dom'
-import { formatDate } from '../../utils/auth'
+import { formatDate, getAvatarUrl } from '../../utils/auth'
 import { RANDOM_IMAGE_API } from '../../constants'
 
 const CATEGORY_COLORS = {
@@ -38,7 +38,10 @@ function PostCard({ post, isLiked, isBookmarked, onLike, onBookmark }) {
       {/* 작성자 영역 (상단) */}
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 3, pt: 2.5, pb: 1.5 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-          <Avatar sx={{ width: 36, height: 36, bgcolor: 'primary.main', fontSize: '0.875rem', fontWeight: 700 }}>
+          <Avatar
+            src={post.user_id ? getAvatarUrl(post.user_id) : undefined}
+            sx={{ width: 36, height: 36, bgcolor: 'primary.main', fontSize: '0.875rem', fontWeight: 700 }}
+          >
             {post.profiles?.nickname?.[0] ?? '?'}
           </Avatar>
           <Box>
