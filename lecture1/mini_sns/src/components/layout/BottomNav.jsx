@@ -1,90 +1,127 @@
-import { Paper, BottomNavigation, BottomNavigationAction, Fab, Box } from '@mui/material'
+import { Box, IconButton, Typography, Fab } from '@mui/material'
 import {
+  Home as HomeFilledIcon,
   HomeOutlined as HomeOutlinedIcon,
+  Groups as GroupsFilledIcon,
   GroupsOutlined as GroupsOutlinedIcon,
   Add as AddIcon,
-  ModeCommentOutlined as ChatBubbleOutlineIcon,
-  PersonOutlined as PersonOutlineIcon,
+  ModeComment as ChatFilledIcon,
+  ModeCommentOutlined as ChatOutlinedIcon,
+  Person as PersonFilledIcon,
+  PersonOutlined as PersonOutlinedIcon,
 } from '@mui/icons-material'
 import { useNavigate, useLocation } from 'react-router-dom'
+
+const NAV_ITEMS = [
+  { label: '홈', path: '/', IconActive: HomeFilledIcon, IconInactive: HomeOutlinedIcon },
+  { label: '모임', path: '/group', IconActive: GroupsFilledIcon, IconInactive: GroupsOutlinedIcon },
+  null, // 중앙 FAB 자리
+  { label: '채팅', path: '/chat', IconActive: ChatFilledIcon, IconInactive: ChatOutlinedIcon },
+  { label: '마이', path: '/mypage', IconActive: PersonFilledIcon, IconInactive: PersonOutlinedIcon },
+]
 
 function BottomNav() {
   const navigate = useNavigate()
   const location = useLocation()
 
-  const getTabValue = () => {
-    const path = location.pathname
-    if (path === '/') return 0
-    if (path === '/group') return 1
-    if (path.startsWith('/chat')) return 3
-    if (path === '/mypage') return 4
-    return -1
+  const isActive = (path) => {
+    if (path === '/') return location.pathname === '/'
+    return location.pathname.startsWith(path)
   }
 
   return (
-    <Paper
-      elevation={0}
+    <Box
       sx={{
         position: 'fixed',
         bottom: 0,
         left: 0,
         right: 0,
+        zIndex: 1200,
+        bgcolor: 'background.paper',
         borderTop: '1px solid',
         borderColor: 'divider',
-        zIndex: 1200,
+        height: 68,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-around',
+        px: 1,
       }}
     >
-      <Box sx={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-        <BottomNavigation
-          value={getTabValue()}
-          showLabels
-          sx={{ width: '100%', height: 64, bgcolor: 'background.paper' }}
-        >
-          <BottomNavigationAction
-            label="홈"
-            icon={<HomeOutlinedIcon />}
-            onClick={() => navigate('/')}
-            sx={{ '&.Mui-selected': { color: 'primary.main' } }}
-          />
-          <BottomNavigationAction
-            label="모임"
-            icon={<GroupsOutlinedIcon />}
-            onClick={() => navigate('/group')}
-            sx={{ '&.Mui-selected': { color: 'primary.main' } }}
-          />
-          {/* 중앙 FAB 자리 */}
-          <BottomNavigationAction disabled sx={{ visibility: 'hidden' }} />
-          <BottomNavigationAction
-            label="채팅"
-            icon={<ChatBubbleOutlineIcon />}
-            onClick={() => navigate('/chat')}
-            sx={{ '&.Mui-selected': { color: 'primary.main' } }}
-          />
-          <BottomNavigationAction
-            label="마이"
-            icon={<PersonOutlineIcon />}
-            onClick={() => navigate('/mypage')}
-            sx={{ '&.Mui-selected': { color: 'primary.main' } }}
-          />
-        </BottomNavigation>
+      {NAV_ITEMS.map((item, idx) => {
+        if (item === null) {
+          return (
+            <Box key="fab" sx={{ position: 'relative', width: 56, display: 'flex', justifyContent: 'center' }}>
+              <Fab
+                color="primary"
+                size="medium"
+                onClick={() => navigate('/create')}
+                sx={{
+                  position: 'absolute',
+                  top: -32,
+                  boxShadow: '0 4px 14px rgba(77,166,255,0.45)',
+                  width: 52,
+                  height: 52,
+                }}
+              >
+                <AddIcon />
+              </Fab>
+            </Box>
+          )
+        }
 
-        {/* 중앙 게시물 작성 버튼 */}
-        <Fab
-          color="primary"
-          size="medium"
-          onClick={() => navigate('/create')}
-          sx={{
-            position: 'absolute',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            top: -24,
-            boxShadow: 3,
-          }}
-        >
-          <AddIcon />
-        </Fab>
-      </Box>
-    </Paper>
+        const active = isActive(item.path)
+        const Icon = active ? item.IconActive : item.IconInactive
+
+        return (
+          <Box
+            key={idx}
+            onClick={() => navigate(item.path)}
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              cursor: 'pointer',
+              flex: 1,
+              py: 0.5,
+              gap: 0.3,
+            }}
+          >
+            {/* 아이콘 + pill 인디케이터 */}
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 44,
+                height: 28,
+                borderRadius: '14px',
+                bgcolor: active ? 'primary.main' : 'transparent',
+                transition: 'background-color 0.2s ease',
+              }}
+            >
+              <Icon
+                sx={{
+                  fontSize: 22,
+                  color: active ? '#fff' : 'text.secondary',
+                  transition: 'color 0.2s ease',
+                }}
+              />
+            </Box>
+            <Typography
+              sx={{
+                fontSize: '0.65rem',
+                fontWeight: active ? 700 : 400,
+                color: active ? 'primary.main' : 'text.secondary',
+                lineHeight: 1,
+                transition: 'all 0.2s ease',
+              }}
+            >
+              {item.label}
+            </Typography>
+          </Box>
+        )
+      })}
+    </Box>
   )
 }
 
