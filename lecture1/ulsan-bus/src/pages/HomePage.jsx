@@ -5,7 +5,6 @@ import FavoriteRoutes from '../components/FavoriteRoutes'
 import FavoriteStops from '../components/FavoriteStops'
 import RouteSearch from '../components/RouteSearch'
 
-const SECTION_GAP = '50px'
 const APP_MARGIN = '24px'
 
 function HomePage() {
@@ -18,18 +17,27 @@ function HomePage() {
         pb: '50px',
       }}
     >
-      <Box sx={{ mt: '16px', mb: SECTION_GAP }}>
+      {/* 출발지/도착지 검색 */}
+      <Box sx={{ mt: '16px', mb: '50px' }}>
         <RouteSearch />
       </Box>
-      <Box sx={{ mb: SECTION_GAP }}>
+
+      {/* 자주 가는 목적지 */}
+      <Box sx={{ mb: '50px' }}>
         <FavoriteDestinations />
       </Box>
-      <Box sx={{ mb: SECTION_GAP }}>
+
+      {/* 버스 검색 (타이틀→입력창 12px은 BusSearchBar 내부) */}
+      <Box sx={{ mb: '24px' }}>
         <BusSearchBar />
       </Box>
-      <Box sx={{ mb: SECTION_GAP }}>
+
+      {/* 정류장 찾기 */}
+      <Box sx={{ mb: '30px' }}>
         <FavoriteStops />
       </Box>
+
+      {/* 노선찾기 */}
       <FavoriteRoutes />
     </Box>
   )

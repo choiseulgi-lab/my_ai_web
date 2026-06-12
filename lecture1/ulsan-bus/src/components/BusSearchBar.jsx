@@ -7,7 +7,7 @@ function BusSearchBar() {
 
   return (
     <Box>
-      <Typography variant="h2" sx={{ mb: 1.5 }}>
+      <Typography variant="h2" sx={{ mb: '12px' }}>
         버스 검색
       </Typography>
       <Box
