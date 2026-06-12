@@ -80,7 +80,7 @@ function FavoriteStops() {
           <CircularProgress size={24} />
         </Box>
       ) : (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0, pl: '52px' }}>
           {stops.map((stop, idx) => (
             <Box
               key={stop.id || idx}
