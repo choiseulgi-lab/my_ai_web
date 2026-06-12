@@ -5,6 +5,7 @@ import StarBorderIcon from '@mui/icons-material/StarBorder'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import BusTypeBadge from './BusTypeBadge'
 
@@ -33,6 +34,7 @@ const SEED_ROUTES = [
 ]
 
 function FavoriteRoutes() {
+  const navigate = useNavigate()
   const [routes, setRoutes] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -76,6 +78,7 @@ function FavoriteRoutes() {
   return (
     <Box>
       <Card
+        onClick={() => navigate('/search?tab=routes')}
         sx={{
           p: 2,
           mb: 1.5,
@@ -85,7 +88,7 @@ function FavoriteRoutes() {
           border: '1.5px solid',
           borderColor: 'primary.main',
           cursor: 'pointer',
-          '&:hover': { bgcolor: 'primary.50' },
+          '&:hover': { bgcolor: '#EEF3FF' },
         }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
@@ -106,6 +109,7 @@ function FavoriteRoutes() {
           {routes.map((route, idx) => (
             <Box
               key={route.id || idx}
+              onClick={() => navigate(`/routes/${route.route_number}`)}
               sx={{
                 display: 'flex',
                 alignItems: 'center',
@@ -113,6 +117,7 @@ function FavoriteRoutes() {
                 py: 1.5,
                 borderBottom: idx < routes.length - 1 ? '1px solid' : 'none',
                 borderColor: 'divider',
+                cursor: 'pointer',
               }}
             >
               <Box sx={{ flex: 1 }}>

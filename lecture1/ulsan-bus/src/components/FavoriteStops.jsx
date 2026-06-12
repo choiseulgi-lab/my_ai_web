@@ -4,6 +4,7 @@ import StarIcon from '@mui/icons-material/Star'
 import StarBorderIcon from '@mui/icons-material/StarBorder'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 
 const SEED_STOPS = [
@@ -13,6 +14,7 @@ const SEED_STOPS = [
 ]
 
 function FavoriteStops() {
+  const navigate = useNavigate()
   const [stops, setStops] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -54,6 +56,7 @@ function FavoriteStops() {
   return (
     <Box>
       <Card
+        onClick={() => navigate('/search?tab=stops')}
         sx={{
           p: 2,
           mb: 1.5,
@@ -63,7 +66,7 @@ function FavoriteStops() {
           border: '1.5px solid',
           borderColor: 'primary.main',
           cursor: 'pointer',
-          '&:hover': { bgcolor: 'primary.50' },
+          '&:hover': { bgcolor: '#EEF3FF' },
         }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
