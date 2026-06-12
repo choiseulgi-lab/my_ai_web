@@ -37,11 +37,7 @@ function ArrivalText({ arrival, stops }) {
     <Box sx={{ textAlign: 'right' }}>
       <Typography
         component="span"
-        sx={{
-          fontSize: '0.8125rem',
-          fontWeight: 600,
-          color: arrival === null ? '#C62828' : '#C62828',
-        }}
+        sx={{ fontSize: '15px', fontWeight: 500, color: '#E53935' }}
       >
         {arrival === null ? '곧 도착' : `약 ${arrival}분`}
       </Typography>
@@ -90,7 +86,7 @@ function FavoriteDestinations() {
           <Card key={dest.id} sx={{ p: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5 }}>
               <DestinationIcon type={dest.icon} />
-              <Typography variant="body2" fontWeight={600} color="text.secondary">
+              <Typography sx={{ fontSize: '15px', fontWeight: 500, color: 'text.secondary' }}>
                 {dest.name}
               </Typography>
             </Box>
@@ -104,7 +100,7 @@ function FavoriteDestinations() {
                     <DirectionsBusIcon sx={{ fontSize: 16, color: 'primary.main', mr: 0.75 }} />
                     <Typography
                       component="span"
-                      sx={{ fontWeight: 700, fontSize: '1rem', color: 'text.primary' }}
+                      sx={{ fontWeight: 700, fontSize: '18px', color: 'text.primary' }}
                     >
                       {bus.number}
                     </Typography>

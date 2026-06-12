@@ -1,9 +1,9 @@
 import { Box } from '@mui/material'
 
 const TYPE_COLORS = {
-  일반: { bg: '#E3F2FD', text: '#1565C0' },
-  순환: { bg: '#E8F5E9', text: '#2E7D32' },
-  좌석: { bg: '#FFEBEE', text: '#C62828' },
+  일반: { bg: '#E8F0FB', text: '#2D6CDF' },
+  순환: { bg: '#E0F5F5', text: '#00A8A8' },
+  좌석: { bg: '#FFF0EA', text: '#FF6B35' },
   급행: { bg: '#FFF3E0', text: '#E65100' },
 }
 
