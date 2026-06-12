@@ -1,6 +1,6 @@
 import { AppBar, Box, IconButton, Toolbar, Typography } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search'
-import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder'
+import StarBorderIcon from '@mui/icons-material/StarBorder'
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone'
 
 function Header() {
@@ -32,7 +32,7 @@ function Header() {
             <SearchIcon />
           </IconButton>
           <IconButton size="small" sx={{ color: 'text.primary' }}>
-            <BookmarkBorderIcon />
+            <StarBorderIcon />
           </IconButton>
           <IconButton size="small" sx={{ color: 'text.primary' }}>
             <NotificationsNoneIcon />
