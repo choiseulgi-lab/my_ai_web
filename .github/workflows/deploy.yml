@@ -59,6 +59,8 @@ jobs:
           cp -r lecture1/mini_sns/dist/. _site/
           mkdir -p _site/ulsan-bus
           cp -r lecture1/ulsan-bus/dist/. _site/ulsan-bus/
+          mkdir -p _site/book-fair
+          cp -r "book Fair/." _site/book-fair/
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
