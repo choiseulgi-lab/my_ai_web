@@ -59,7 +59,7 @@ function ArrivalText({ arrival, stops }) {
 
 function FavoriteDestinations() {
   return (
-    <Box sx={{ px: 2, mb: 3 }}>
+    <Box>
       <Box
         sx={{
           display: 'flex',

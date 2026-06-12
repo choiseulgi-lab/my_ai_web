@@ -11,8 +11,7 @@ function RouteSearch() {
   return (
     <Box
       sx={{
-        mx: 2,
-        my: 2,
+        my: 0,
         p: 2,
         borderRadius: '8px',
         background:

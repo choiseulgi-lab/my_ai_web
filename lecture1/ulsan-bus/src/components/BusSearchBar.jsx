@@ -6,7 +6,7 @@ function BusSearchBar() {
   const [query, setQuery] = useState('')
 
   return (
-    <Box sx={{ px: 2, mb: 3 }}>
+    <Box>
       <Typography variant="h2" sx={{ mb: 1.5 }}>
         버스 검색
       </Typography>

@@ -52,7 +52,7 @@ function FavoriteStops() {
   }
 
   return (
-    <Box sx={{ px: 2, mb: 3 }}>
+    <Box>
       <Card
         sx={{
           p: 2,

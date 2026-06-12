@@ -74,7 +74,7 @@ function FavoriteRoutes() {
   }
 
   return (
-    <Box sx={{ px: 2, mb: 4 }}>
+    <Box>
       <Card
         sx={{
           p: 2,
