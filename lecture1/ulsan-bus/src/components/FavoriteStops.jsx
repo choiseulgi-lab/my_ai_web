@@ -95,7 +95,7 @@ function FavoriteStops() {
             >
               <Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Typography variant="body1" fontWeight={600}>
+                  <Typography sx={{ fontSize: '16px', fontWeight: 500 }}>
                     {stop.stop_name}
                   </Typography>
                   <Typography variant="caption" color="text.disabled">

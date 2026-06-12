@@ -119,7 +119,7 @@ function FavoriteRoutes() {
                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.25 }}>
                   <Typography
                     component="span"
-                    sx={{ fontWeight: 700, fontSize: '1rem', color: 'text.primary' }}
+                    sx={{ fontWeight: 500, fontSize: '16px', color: 'text.primary' }}
                   >
                     {route.route_number}
                   </Typography>
