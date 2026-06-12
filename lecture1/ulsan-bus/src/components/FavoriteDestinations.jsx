@@ -44,7 +44,7 @@ function ArrivalText({ arrival, stops }) {
       <Typography
         component="span"
         variant="caption"
-        color="text.secondary"
+        color="text.disabled"
         sx={{ ml: 0.5 }}
       >
         ({stops}전)

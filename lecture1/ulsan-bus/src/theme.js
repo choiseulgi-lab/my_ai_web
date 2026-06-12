@@ -15,6 +15,11 @@ const theme = createTheme({
       default: '#F0F2F5',
       paper: '#ffffff',
     },
+    text: {
+      primary: '#111111',
+      secondary: '#555555',
+      disabled: '#979797',
+    },
   },
   typography: {
     fontFamily: '"Pretendard", "Roboto", "Helvetica", "Arial", sans-serif',
