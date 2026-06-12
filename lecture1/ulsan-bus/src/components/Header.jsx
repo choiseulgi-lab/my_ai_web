@@ -19,9 +19,10 @@ function Header() {
           variant="h1"
           sx={{
             color: 'primary.main',
-            fontWeight: 800,
-            letterSpacing: '-0.5px',
-            fontSize: '1.375rem',
+            fontFamily: '"Protest Guerrilla", sans-serif',
+            fontWeight: 400,
+            letterSpacing: '0px',
+            fontSize: '1.5rem',
           }}
         >
           ULSAN BUS
