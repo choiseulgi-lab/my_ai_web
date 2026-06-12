@@ -1,66 +1,36 @@
-import { useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
-import { Box, IconButton, Typography } from '@mui/material'
-import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import { Box, CircularProgress, Typography } from '@mui/material'
+import DirectionsBusIcon from '@mui/icons-material/DirectionsBus'
 import StarBorderIcon from '@mui/icons-material/StarBorder'
 import StarIcon from '@mui/icons-material/Star'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
-import DirectionsBusIcon from '@mui/icons-material/DirectionsBus'
+import { supabase } from '../lib/supabase'
 
-const ROUTES_DATA = {
+// Supabase 컬럼 'green'|'yellow'|'red' → hex
+const COLOR = { green: '#4CAF50', yellow: '#FFC107', red: '#F44336' }
+const c = (key) => (key ? COLOR[key] || '#4CAF50' : null)
+
+// Supabase 연결 실패 시 사용하는 정적 대체 데이터
+const FALLBACK = {
   '753': {
-    route_number: '753',
-    route_type: '일반',
-    interval_minutes: 45,
-    start_point: '명촌차고지(기점)',
-    end_point: '울산과학기술원(종점)',
-    forward_count: 5,
-    backward_count: 3,
+    route: { route_number: '753', route_type: '일반', interval_minutes: 45, start_point: '명촌차고지(기점)', end_point: '울산과학기술원(종점)', forward_count: 5, backward_count: 3 },
     stops: [
-      { name: '명촌차고지(기점)', id: '40344', is_station: true },
-      { name: '평강리버에이아파트앞', id: '40344', is_station: false },
-      { name: '태화강역(2번 정류소)', id: '40344', is_station: true },
-      { name: '이마트앞, 울산통계청', id: '40344', is_station: false },
-      { name: '농수산물도매시장앞', id: '40344', is_station: true },
-      { name: '농수산물도매시장앞', id: '40344', is_station: false },
-      { name: '농수산물도매시장앞', id: '40344', is_station: true },
-      { name: '농수산물도매시장앞', id: '40344', is_station: false },
-      { name: '농수산물도매시장앞', id: '40344', is_station: false },
-      { name: '농수산물도매시장앞', id: '40344', is_station: true },
-      { name: '농수산물도매시장앞', id: '40344', is_station: false },
-      { name: '농수산물도매시장앞', id: '40344', is_station: false },
-      { name: '울산과학기술원(종점)', id: '40399', is_station: true },
-    ],
-  },
-  '743': {
-    route_number: '743',
-    route_type: '일반',
-    interval_minutes: 45,
-    start_point: '명촌차고지(기점)',
-    end_point: '울산과학기술원(종점)',
-    forward_count: 4,
-    backward_count: 2,
-    stops: [
-      { name: '명촌차고지(기점)', id: '40344', is_station: true },
-      { name: '평강리버에이아파트앞', id: '40345', is_station: false },
-      { name: '태화강역', id: '40346', is_station: true },
-      { name: '울산과학기술원(종점)', id: '40399', is_station: true },
-    ],
-  },
-  '492': {
-    route_number: '492',
-    route_type: '순환',
-    interval_minutes: 20,
-    start_point: '울산역(기점)',
-    end_point: '울산역(종점)',
-    forward_count: 6,
-    backward_count: 0,
-    stops: [
-      { name: '울산역(기점)', id: '10100', is_station: true },
-      { name: '태화강역', id: '10200', is_station: true },
-      { name: '공업탑로터리', id: '10300', is_station: false },
-      { name: '울산시청', id: '10400', is_station: true },
-      { name: '울산역(종점)', id: '10100', is_station: true },
+      { stop_name: '명촌차고지(기점)',       stop_id: '40344', stop_type: 'bus',   dot_color: 'green',  line_color_below: 'green'  },
+      { stop_name: '평창리비에르아파트앞',   stop_id: '40345', stop_type: 'small', dot_color: 'green',  line_color_below: 'green'  },
+      { stop_name: '태화강역(2번 정류소)',   stop_id: '40346', stop_type: 'small', dot_color: 'green',  line_color_below: 'yellow' },
+      { stop_name: '이마트앞, 울산통계청',  stop_id: '40347', stop_type: 'bus',   dot_color: 'red',    line_color_below: 'red'    },
+      { stop_name: '농수산물도매시장앞',     stop_id: '40348', stop_type: 'small', dot_color: 'red',    line_color_below: 'red'    },
+      { stop_name: '롯데백화점울산점앞',     stop_id: '40349', stop_type: 'small', dot_color: 'red',    line_color_below: 'yellow' },
+      { stop_name: '공업탑로터리',           stop_id: '10300', stop_type: 'bus',   dot_color: 'green',  line_color_below: 'green'  },
+      { stop_name: '남구청앞',               stop_id: '40350', stop_type: 'small', dot_color: 'green',  line_color_below: 'green'  },
+      { stop_name: '신정시장앞',             stop_id: '40351', stop_type: 'small', dot_color: 'green',  line_color_below: 'green'  },
+      { stop_name: '무거교차로',             stop_id: '40352', stop_type: 'small', dot_color: 'green',  line_color_below: 'yellow' },
+      { stop_name: '옥동아파트앞',           stop_id: '40353', stop_type: 'bus',   dot_color: 'green',  line_color_below: 'green'  },
+      { stop_name: '울산대학교정문',         stop_id: '40354', stop_type: 'small', dot_color: 'green',  line_color_below: 'green'  },
+      { stop_name: '문수스타디움앞',         stop_id: '40355', stop_type: 'small', dot_color: 'green',  line_color_below: 'green'  },
+      { stop_name: '울산과학기술원입구',     stop_id: '40356', stop_type: 'bus',   dot_color: 'green',  line_color_below: 'green'  },
+      { stop_name: '울산과학기술원(종점)',   stop_id: '40357', stop_type: 'small', dot_color: 'green',  line_color_below: null     },
     ],
   },
 }
@@ -73,180 +43,229 @@ const TYPE_COLORS = {
 
 function RouteDetailPage() {
   const { routeNumber } = useParams()
-  const navigate = useNavigate()
-  const route = ROUTES_DATA[routeNumber] || ROUTES_DATA['753']
+  const [route, setRoute] = useState(null)
+  const [stops, setStops] = useState([])
+  const [loading, setLoading] = useState(true)
   const [direction, setDirection] = useState('forward')
   const [starred, setStarred] = useState(false)
-  const colors = TYPE_COLORS[route.route_type] || TYPE_COLORS['일반']
 
-  const stops = direction === 'forward' ? route.stops : [...route.stops].reverse()
+  useEffect(() => {
+    loadData()
+  }, [routeNumber])
+
+  async function loadData() {
+    setLoading(true)
+    try {
+      const [{ data: routeArr, error: re }, { data: sd, error: se }] = await Promise.all([
+        supabase.from('routes').select('*').eq('route_number', routeNumber),
+        supabase.from('route_stops').select('*').eq('route_number', routeNumber).order('sequence'),
+      ])
+      if (re) throw re
+      if (se) throw se
+      const rd = routeArr?.[0]
+      if (!rd) throw new Error('no route')
+      setRoute(rd)
+      setStops(sd || [])
+    } catch {
+      const fb = FALLBACK[routeNumber] || FALLBACK['753']
+      setRoute(fb.route)
+      setStops(fb.stops)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+        <CircularProgress />
+      </Box>
+    )
+  }
+
+  if (!route) return null
+
+  const colors = TYPE_COLORS[route.route_type] || TYPE_COLORS['일반']
+  const displayStops = direction === 'forward' ? stops : [...stops].reverse()
 
   return (
     <Box sx={{ bgcolor: 'background.default', minHeight: '100vh' }}>
-      {/* 헤더 */}
-      <Box
-        sx={{
-          position: 'sticky', top: 0, zIndex: 100,
-          bgcolor: 'background.paper',
-          borderBottom: '1px solid', borderColor: 'divider',
-          px: '24px', py: 1.5,
-          display: 'flex', alignItems: 'center', gap: 1,
-        }}
-      >
-        <IconButton size="small" onClick={() => navigate(-1)} sx={{ color: 'text.primary', p: 0.5 }}>
-          <ArrowBackIcon />
-        </IconButton>
-        <Typography sx={{ fontSize: '17px', fontWeight: 700, color: 'text.primary', flex: 1 }}>
-          노선 정보
-        </Typography>
-      </Box>
-
       <Box sx={{ px: '24px', pt: 2 }}>
+
         {/* 노선 카드 */}
         <Box
           sx={{
-            p: 2, mb: 2,
+            p: '16px',
+            mb: 2,
             borderRadius: '8px',
-            background: 'linear-gradient(white, white) padding-box, linear-gradient(135deg, #1565C0, #7B1FA2) border-box',
+            background:
+              'linear-gradient(white, white) padding-box, linear-gradient(to right, #1565C0, #E91E8C) border-box',
             border: '2px solid transparent',
-            bgcolor: 'background.paper',
           }}
         >
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.75 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Typography sx={{ fontSize: '24px', fontWeight: 700, color: 'text.primary' }}>
-                {route.route_number}
-              </Typography>
-              <Box
-                component="span"
-                sx={{
-                  px: 0.75, py: 0.2, borderRadius: 1,
-                  fontSize: '11px', fontWeight: 600,
-                  bgcolor: colors.bg, color: colors.text,
-                }}
-              >
-                {route.route_type}
-              </Box>
-            </Box>
-            <IconButton size="small" onClick={() => setStarred(!starred)} sx={{ p: 0.5 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+            <Typography sx={{ fontSize: '26px', fontWeight: 700, color: 'text.primary' }}>
+              {route.route_number}
+            </Typography>
+            <Box
+              onClick={() => setStarred(!starred)}
+              sx={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+            >
               {starred
                 ? <StarIcon sx={{ color: '#FFC107', fontSize: 22 }} />
-                : <StarBorderIcon sx={{ color: '#FFC107', fontSize: 22 }} />
+                : <StarBorderIcon sx={{ fontSize: 22, color: 'text.secondary' }} />
               }
-            </IconButton>
+            </Box>
           </Box>
-          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
+          <Typography sx={{ fontSize: '13px', color: 'text.secondary', mb: 0.5 }}>
             {route.route_type} · 배차 {route.interval_minutes}분
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-            <Typography variant="caption" color="text.secondary">{route.start_point}</Typography>
+            <Typography sx={{ fontSize: '13px', color: 'text.secondary' }}>
+              {route.start_point}
+            </Typography>
             <ArrowForwardIcon sx={{ fontSize: 12, color: 'text.disabled' }} />
-            <Typography variant="caption" color="text.secondary">{route.end_point}</Typography>
+            <Typography sx={{ fontSize: '13px', color: 'text.secondary' }}>
+              {route.end_point}
+            </Typography>
           </Box>
         </Box>
 
-        {/* 정방향 / 역방향 버튼 */}
-        <Box sx={{ display: 'flex', gap: 1, mb: 3 }}>
-          <Box
-            onClick={() => setDirection('forward')}
-            sx={{
-              flex: 1, py: 1, textAlign: 'center',
-              borderRadius: '8px',
-              border: '1.5px solid',
-              borderColor: direction === 'forward' ? 'primary.main' : 'divider',
-              bgcolor: direction === 'forward' ? '#EEF3FF' : 'background.paper',
-              cursor: 'pointer',
-            }}
-          >
-            <Typography sx={{ fontSize: '13px', fontWeight: 600, color: direction === 'forward' ? 'primary.main' : 'text.disabled' }}>
-              정방향 ({route.forward_count}대운행)
-            </Typography>
-          </Box>
-          <Box
-            onClick={() => setDirection('backward')}
-            sx={{
-              flex: 1, py: 1, textAlign: 'center',
-              borderRadius: '8px',
-              border: '1.5px solid',
-              borderColor: direction === 'backward' ? 'primary.main' : 'divider',
-              bgcolor: direction === 'backward' ? '#EEF3FF' : 'background.paper',
-              cursor: 'pointer',
-            }}
-          >
-            <Typography sx={{ fontSize: '13px', fontWeight: 600, color: direction === 'backward' ? 'primary.main' : 'text.disabled' }}>
-              역방향 ({route.backward_count}대운행)
-            </Typography>
-          </Box>
+        {/* 정방향 / 역방향 토글 */}
+        <Box sx={{ display: 'flex', gap: 1, mb: 1.5 }}>
+          {[
+            { key: 'forward',  label: `정방향 (${route.forward_count}대운행)` },
+            { key: 'backward', label: `역방향 (${route.backward_count}대운행)` },
+          ].map(({ key, label }) => (
+            <Box
+              key={key}
+              onClick={() => setDirection(key)}
+              sx={{
+                flex: 1,
+                py: '10px',
+                textAlign: 'center',
+                borderRadius: '20px',
+                border: '1.5px solid',
+                borderColor: direction === key ? 'text.primary' : 'divider',
+                bgcolor: 'background.paper',
+                cursor: 'pointer',
+              }}
+            >
+              <Typography
+                sx={{
+                  fontSize: '14px',
+                  fontWeight: direction === key ? 600 : 400,
+                  color: direction === key ? 'text.primary' : 'text.disabled',
+                }}
+              >
+                {label}
+              </Typography>
+            </Box>
+          ))}
         </Box>
 
         {/* 운행시간 정보 */}
-        <Typography sx={{ fontSize: '15px', fontWeight: 600, color: 'text.primary', mb: 2 }}>
-          운행시간 정보
-        </Typography>
+        <Box
+          sx={{
+            mb: 3,
+            py: '13px',
+            bgcolor: 'background.paper',
+            borderRadius: '8px',
+            textAlign: 'center',
+            boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
+            cursor: 'pointer',
+          }}
+        >
+          <Typography sx={{ fontSize: '14px', fontWeight: 500, color: 'text.primary' }}>
+            운행시간 정보
+          </Typography>
+        </Box>
 
         {/* 정류장 타임라인 */}
-        <Box sx={{ position: 'relative', pb: 4 }}>
-          {/* 세로 라인 */}
-          <Box
-            sx={{
-              position: 'absolute',
-              left: 10, top: 8, bottom: 8,
-              width: '2px',
-              bgcolor: '#D0D5E8',
-            }}
-          />
-
-          {stops.map((stop, idx) => {
+        <Box sx={{ pb: 4 }}>
+          {displayStops.map((stop, idx) => {
             const isFirst = idx === 0
-            const isLast = idx === stops.length - 1
+            const isLast = idx === displayStops.length - 1
+            const topColor = idx > 0
+              ? (c(displayStops[idx - 1].line_color_below) || 'transparent')
+              : 'transparent'
+            const bottomColor = !isLast
+              ? (c(stop.line_color_below) || 'transparent')
+              : 'transparent'
+            const isBus = stop.stop_type === 'bus'
+            const dotColor = c(stop.dot_color) || '#4CAF50'
+            const dotSize = isBus ? 28 : 10
 
             return (
-              <Box
-                key={idx}
-                sx={{ display: 'flex', alignItems: 'center', mb: 0, py: 1.25, position: 'relative' }}
-              >
-                {/* 정류장 아이콘 */}
+              <Box key={idx} sx={{ display: 'flex', minHeight: isBus ? 62 : 50 }}>
+
+                {/* 타임라인 열 — flex column으로 위 라인 / 도트 / 아래 라인 배치 */}
                 <Box
                   sx={{
-                    width: 22, height: 22,
-                    borderRadius: '50%',
-                    border: '2px solid',
-                    borderColor: isFirst || isLast ? 'primary.main' : (stop.is_station ? '#4A7FD4' : '#D0D5E8'),
-                    bgcolor: isFirst || isLast ? 'primary.main' : (stop.is_station ? '#fff' : '#fff'),
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    width: 36,
                     flexShrink: 0,
-                    zIndex: 1,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
                   }}
                 >
-                  {stop.is_station && (
-                    <DirectionsBusIcon
-                      sx={{
-                        fontSize: 12,
-                        color: isFirst || isLast ? '#fff' : 'primary.main',
-                      }}
-                    />
-                  )}
-                </Box>
-
-                {/* 정류장 이름 */}
-                <Box sx={{ ml: 2 }}>
-                  <Typography
+                  {/* 위 라인 */}
+                  <Box
+                    style={{ width: 3, flex: 1, backgroundColor: topColor }}
+                  />
+                  {/* 도트 */}
+                  <Box
                     sx={{
-                      fontSize: isFirst || isLast ? '15px' : '14px',
-                      fontWeight: isFirst || isLast ? 600 : 400,
-                      color: isFirst || isLast ? 'primary.main' : 'text.primary',
+                      width: dotSize,
+                      height: dotSize,
+                      flexShrink: 0,
+                      borderRadius: '50%',
+                      border: `2px solid ${dotColor}`,
+                      backgroundColor: 'white',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
                     }}
                   >
-                    {stop.name}
+                    {isBus && (
+                      <DirectionsBusIcon style={{ fontSize: 14, color: dotColor }} />
+                    )}
+                  </Box>
+                  {/* 아래 라인 */}
+                  <Box
+                    style={{ width: 3, flex: 1, backgroundColor: bottomColor }}
+                  />
+                </Box>
+
+                {/* 정류장 텍스트 */}
+                <Box
+                  sx={{
+                    flex: 1,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    pl: '14px',
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      fontSize: '15px',
+                      fontWeight: isFirst || isLast ? 600 : 400,
+                      color: 'text.primary',
+                      lineHeight: 1.3,
+                    }}
+                  >
+                    {stop.stop_name}
                   </Typography>
-                  <Typography variant="caption" color="text.disabled">
-                    ({stop.id})
+                  <Typography sx={{ fontSize: '12px', color: 'text.disabled' }}>
+                    ({stop.stop_id})
                   </Typography>
                 </Box>
               </Box>
             )
           })}
         </Box>
+
       </Box>
     </Box>
   )
