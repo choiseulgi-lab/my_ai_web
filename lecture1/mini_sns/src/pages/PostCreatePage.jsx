@@ -1,40 +1,32 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import {
   Box, Typography, IconButton, TextField, Button,
-  CircularProgress, Alert, Grid,
+  CircularProgress, Alert,
 } from '@mui/material'
 import {
   ArrowBackIosNew as ArrowBackIosNewIcon,
-  Refresh as RefreshIcon,
-  CheckCircle as CheckCircleIcon,
+  AddPhotoAlternate as AddPhotoAlternateIcon,
+  Close as CloseIcon,
 } from '@mui/icons-material'
 import { useNavigate, useParams } from 'react-router-dom'
 import { supabase } from '../supabaseClient.js'
 import { useAuth } from '../contexts/AuthContext.jsx'
-
-function getRandomImages() {
-  return Array.from({ length: 6 }, (_, i) => ({
-    id: `img-${Date.now()}-${i}`,
-    url: `https://picsum.photos/seed/travel-${Date.now()}-${i}/400/400`,
-    thumb: `https://picsum.photos/seed/travel-${Date.now()}-${i}/200/200`,
-  }))
-}
 
 function PostCreatePage() {
   const navigate = useNavigate()
   const { id: editPostId } = useParams()
   const { currentUser } = useAuth()
   const isEditMode = Boolean(editPostId)
+  const fileInputRef = useRef(null)
 
   const [form, setForm] = useState({ travel_title: '', travel_location: '', caption: '', hashtag: '' })
-  const [images, setImages] = useState([])
-  const [selectedImageUrl, setSelectedImageUrl] = useState('')
-  const [isImagesLoading, setIsImagesLoading] = useState(false)
+  const [imageFile, setImageFile] = useState(null)
+  const [imagePreviewUrl, setImagePreviewUrl] = useState('')
+  const [existingImageUrl, setExistingImageUrl] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isLoadingPost, setIsLoadingPost] = useState(isEditMode)
   const [error, setError] = useState('')
 
-  // 수정 모드: 기존 게시물 데이터 로드
   useEffect(() => {
     if (!isEditMode) return
     const fetchPost = async () => {
@@ -47,71 +39,111 @@ function PostCreatePage() {
           caption: data.caption || '',
           hashtag: data.hashtag || '',
         })
-        setSelectedImageUrl(data.image_url || '')
+        setExistingImageUrl(data.image_url || '')
       }
       setIsLoadingPost(false)
     }
     fetchPost()
   }, [editPostId, isEditMode])
 
-  const loadImages = useCallback(() => {
-    setIsImagesLoading(true)
-    if (!isEditMode) setSelectedImageUrl('')
-    setTimeout(() => {
-      setImages(getRandomImages())
-      setIsImagesLoading(false)
-    }, 500)
-  }, [isEditMode])
-
-  useEffect(() => {
-    loadImages()
-  }, [loadImages])
-
   const handleChange = (e) => {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
   }
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+
+    if (!file.type.startsWith('image/')) {
+      setError('이미지 파일만 업로드할 수 있습니다.')
+      return
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setError('이미지 크기는 5MB 이하여야 합니다.')
+      return
+    }
+
+    setError('')
+    setImageFile(file)
+    setImagePreviewUrl(URL.createObjectURL(file))
+  }
+
+  const handleRemoveImage = () => {
+    setImageFile(null)
+    setImagePreviewUrl('')
+    setExistingImageUrl('')
+    if (fileInputRef.current) fileInputRef.current.value = ''
+  }
+
+  const uploadImage = async () => {
+    if (!imageFile) return existingImageUrl
+
+    const fileExt = imageFile.name.split('.').pop()
+    const filePath = `travel-images/${currentUser.id}-${Date.now()}.${fileExt}`
+
+    const { error: uploadError } = await supabase.storage
+      .from('post-images')
+      .upload(filePath, imageFile)
+
+    if (uploadError) throw new Error('이미지 업로드에 실패했습니다.')
+
+    const { data: urlData } = supabase.storage
+      .from('post-images')
+      .getPublicUrl(filePath)
+
+    return urlData.publicUrl
+  }
+
   const handleSubmit = async () => {
-    if (!form.travel_title || !form.travel_location || !selectedImageUrl) {
-      setError('여행 제목, 여행 지역, 이미지를 모두 입력/선택해주세요.')
+    const hasImage = imagePreviewUrl || existingImageUrl
+    if (!form.travel_title || !form.travel_location || !hasImage) {
+      setError('여행 제목, 여행 지역, 이미지를 모두 입력해주세요.')
       return
     }
     setIsSubmitting(true)
     setError('')
 
-    if (isEditMode) {
-      const { error: updateError } = await supabase
-        .from('dorun_posts')
-        .update({
-          travel_title: form.travel_title,
-          travel_location: form.travel_location,
-          caption: form.caption,
-          hashtag: form.hashtag,
-          image_url: selectedImageUrl,
-        })
-        .eq('id', editPostId)
+    try {
+      const imageUrl = await uploadImage()
 
-      setIsSubmitting(false)
-      if (updateError) { setError('수정 중 오류가 발생했습니다.'); return }
-      navigate(`/post/${editPostId}`, { replace: true })
-    } else {
-      const { error: insertError } = await supabase
-        .from('dorun_posts')
-        .insert({
-          user_id: currentUser.id,
-          travel_title: form.travel_title,
-          travel_location: form.travel_location,
-          caption: form.caption,
-          hashtag: form.hashtag,
-          image_url: selectedImageUrl,
-          likes_count: 0,
-        })
+      if (isEditMode) {
+        const { error: updateError } = await supabase
+          .from('dorun_posts')
+          .update({
+            travel_title: form.travel_title,
+            travel_location: form.travel_location,
+            caption: form.caption,
+            hashtag: form.hashtag,
+            image_url: imageUrl,
+          })
+          .eq('id', editPostId)
 
+        if (updateError) throw new Error('수정 중 오류가 발생했습니다.')
+        navigate(`/post/${editPostId}`, { replace: true })
+      } else {
+        const { error: insertError } = await supabase
+          .from('dorun_posts')
+          .insert({
+            user_id: currentUser.id,
+            travel_title: form.travel_title,
+            travel_location: form.travel_location,
+            caption: form.caption,
+            hashtag: form.hashtag,
+            image_url: imageUrl,
+            likes_count: 0,
+          })
+
+        if (insertError) throw new Error('게시물 등록 중 오류가 발생했습니다.')
+        navigate('/')
+      }
+    } catch (err) {
+      setError(err.message)
+    } finally {
       setIsSubmitting(false)
-      if (insertError) { setError('게시물 등록 중 오류가 발생했습니다.'); return }
-      navigate('/')
     }
   }
+
+  const displayImageUrl = imagePreviewUrl || existingImageUrl
 
   if (isLoadingPost) {
     return (
@@ -157,55 +189,62 @@ function PostCreatePage() {
         <TextField name="hashtag" label="해시태그" variant="outlined" fullWidth
           value={form.hashtag} onChange={handleChange} placeholder="예: #제주도 #바다 #힐링" />
 
-        {/* 이미지 선택 */}
+        {/* 이미지 업로드 */}
         <Box>
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
-            <Typography variant="body2" fontWeight={600}>여행 이미지 선택 *</Typography>
-            <IconButton size="small" onClick={loadImages} disabled={isImagesLoading}>
-              <RefreshIcon fontSize="small" />
-            </IconButton>
-          </Box>
+          <Typography variant="body2" fontWeight={600} sx={{ mb: 1.5 }}>여행 이미지 *</Typography>
 
-          {/* 수정 모드: 현재 이미지 미리보기 */}
-          {isEditMode && selectedImageUrl && !images.some(img => img.url === selectedImageUrl) && (
-            <Box sx={{ mb: 1.5 }}>
-              <Typography variant="caption" color="text.secondary" sx={{ mb: 0.5, display: 'block' }}>
-                현재 이미지
-              </Typography>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            style={{ display: 'none' }}
+            onChange={handleImageChange}
+          />
+
+          {displayImageUrl ? (
+            <Box sx={{ position: 'relative' }}>
               <Box
-                component="img" src={selectedImageUrl}
-                sx={{ width: 100, height: 100, objectFit: 'cover', borderRadius: 2, border: '3px solid', borderColor: 'primary.main' }}
+                component="img"
+                src={displayImageUrl}
+                sx={{ width: '100%', maxHeight: 300, objectFit: 'cover', borderRadius: 2, display: 'block' }}
               />
-            </Box>
-          )}
-
-          {isImagesLoading ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', py: 3 }}>
-              <CircularProgress size={28} color="primary" />
+              <IconButton
+                size="small"
+                onClick={handleRemoveImage}
+                sx={{
+                  position: 'absolute', top: 8, right: 8,
+                  bgcolor: 'rgba(0,0,0,0.5)', color: 'white',
+                  '&:hover': { bgcolor: 'rgba(0,0,0,0.7)' },
+                }}
+              >
+                <CloseIcon fontSize="small" />
+              </IconButton>
+              <Button
+                variant="outlined" size="small" fullWidth
+                onClick={() => fileInputRef.current?.click()}
+                sx={{ mt: 1, borderRadius: 2 }}
+              >
+                이미지 변경
+              </Button>
             </Box>
           ) : (
-            <Grid container spacing={1}>
-              {images.map((img) => (
-                <Grid item xs={4} key={img.id}>
-                  <Box
-                    onClick={() => setSelectedImageUrl(img.url)}
-                    sx={{
-                      position: 'relative', cursor: 'pointer', borderRadius: 2, overflow: 'hidden',
-                      border: selectedImageUrl === img.url ? '3px solid' : '3px solid transparent',
-                      borderColor: selectedImageUrl === img.url ? 'primary.main' : 'transparent',
-                    }}
-                  >
-                    <Box component="img" src={img.thumb}
-                      sx={{ width: '100%', aspectRatio: '1/1', objectFit: 'cover', display: 'block' }} />
-                    {selectedImageUrl === img.url && (
-                      <Box sx={{ position: 'absolute', top: 4, right: 4, color: 'primary.main', bgcolor: 'white', borderRadius: '50%', lineHeight: 0 }}>
-                        <CheckCircleIcon fontSize="small" />
-                      </Box>
-                    )}
-                  </Box>
-                </Grid>
-              ))}
-            </Grid>
+            <Box
+              onClick={() => fileInputRef.current?.click()}
+              sx={{
+                border: '2px dashed', borderColor: 'divider', borderRadius: 2,
+                p: 4, display: 'flex', flexDirection: 'column', alignItems: 'center',
+                cursor: 'pointer', gap: 1,
+                '&:hover': { borderColor: 'primary.main', bgcolor: 'action.hover' },
+              }}
+            >
+              <AddPhotoAlternateIcon sx={{ fontSize: 48, color: 'text.secondary' }} />
+              <Typography variant="body2" color="text.secondary">
+                사진을 선택해주세요
+              </Typography>
+              <Typography variant="caption" color="text.disabled">
+                JPG, PNG, WEBP · 최대 5MB
+              </Typography>
+            </Box>
           )}
         </Box>
       </Box>
