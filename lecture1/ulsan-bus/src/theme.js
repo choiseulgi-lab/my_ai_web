@@ -26,11 +26,11 @@ const theme = createTheme({
     caption: { fontSize: '0.75rem' },
   },
   spacing: 8,
-  shape: { borderRadius: 12 },
+  shape: { borderRadius: 8 },
   components: {
     MuiCard: {
       styleOverrides: {
-        root: { boxShadow: '0 1px 4px rgba(0,0,0,0.08)', borderRadius: 12 },
+        root: { boxShadow: '0 1px 4px rgba(0,0,0,0.08)', borderRadius: 8 },
       },
     },
   },

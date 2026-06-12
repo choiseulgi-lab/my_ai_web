@@ -14,7 +14,7 @@ function RouteSearch() {
         mx: 2,
         my: 2,
         p: 2,
-        borderRadius: 3,
+        borderRadius: '8px',
         background:
           'linear-gradient(white, white) padding-box, linear-gradient(135deg, #1565C0, #7B1FA2) border-box',
         border: '2px solid transparent',
