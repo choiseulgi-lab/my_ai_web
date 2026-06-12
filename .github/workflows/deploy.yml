@@ -40,6 +40,15 @@ jobs:
           npm install
           npm run build
 
+      - name: Build ulsan-bus
+        working-directory: lecture1/ulsan-bus
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+        run: |
+          npm install
+          npm run build
+
       - name: Prepare deployment directory
         run: |
           mkdir -p _site
@@ -48,6 +57,8 @@ jobs:
           cp -r lecture1/my-community/dist/. _site/my-community/
           mkdir -p _site/mini_sns
           cp -r lecture1/mini_sns/dist/. _site/
+          mkdir -p _site/ulsan-bus
+          cp -r lecture1/ulsan-bus/dist/. _site/ulsan-bus/
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
