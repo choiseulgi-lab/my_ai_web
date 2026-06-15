@@ -1,89 +1,177 @@
-import styles from './SymptomPage.module.css';
+import { MapPin } from 'lucide-react';
+import styles from './BodyDiagram.module.css';
 
-/* ── 앞면 신체 부위 정의 ── */
-const FRONT = [
-  { id: 'head',      label: '머리·얼굴', shape: 'ellipse', cx: 80, cy: 28, rx: 24, ry: 26 },
-  { id: 'throat',    label: '목',       shape: 'rect', x: 66, y: 52,  w: 28, h: 14, rx: 6  },
-  { id: 'chest',     label: '가슴',     shape: 'rect', x: 44, y: 64,  w: 72, h: 56, rx: 10 },
-  { id: 'abdomen',   label: '복부',     shape: 'rect', x: 46, y: 118, w: 68, h: 38, rx: 8  },
-  { id: 'left_arm',  label: '왼팔',     shape: 'rect', x: 14, y: 66,  w: 26, h: 82, rx: 10 },
-  { id: 'right_arm', label: '오른팔',   shape: 'rect', x: 120,y: 66,  w: 26, h: 82, rx: 10 },
-  { id: 'hip',       label: '허리·골반', shape: 'rect', x: 44, y: 154, w: 72, h: 24, rx: 8  },
-  { id: 'left_leg',  label: '왼다리',   shape: 'rect', x: 44, y: 176, w: 32, h: 116,rx: 10 },
-  { id: 'right_leg', label: '오른다리', shape: 'rect', x: 84, y: 176, w: 32, h: 116,rx: 10 },
+/*
+ * 이미지 원본: 178 × 333 px
+ * 컨테이너:   160 × 300 px  (scale ≈ 0.90)
+ * 핫스팟 좌표는 컨테이너 % 기준
+ */
+
+const FRONT_REGIONS = [
+  {
+    id: 'head',
+    label: '머리·얼굴',
+    pin: { top: '12%', left: '50%' },
+    style: { top: '2.5%', left: '35%', width: '30%', height: '19%', borderRadius: '50%' },
+  },
+  {
+    id: 'throat',
+    label: '목·인후',
+    pin: { top: '23%', left: '50%' },
+    style: { top: '20%', left: '41%', width: '18%', height: '7%', borderRadius: '8px' },
+  },
+  {
+    id: 'chest',
+    label: '가슴',
+    pin: { top: '35%', left: '50%' },
+    style: { top: '26%', left: '26%', width: '48%', height: '20%', borderRadius: '8px' },
+  },
+  {
+    id: 'abdomen',
+    label: '복부',
+    pin: { top: '52%', left: '50%' },
+    style: { top: '45%', left: '28%', width: '44%', height: '18%', borderRadius: '8px' },
+  },
+  {
+    id: 'left_arm',
+    label: '왼팔·손',
+    pin: { top: '44%', left: '14%' },
+    style: { top: '25.5%', left: '5%', width: '22%', height: '42%', borderRadius: '24px' },
+  },
+  {
+    id: 'right_arm',
+    label: '오른팔·손',
+    pin: { top: '44%', left: '86%' },
+    style: { top: '25.5%', left: '73%', width: '22%', height: '42%', borderRadius: '24px' },
+  },
+  {
+    id: 'hip',
+    label: '허리·골반',
+    pin: { top: '68%', left: '50%' },
+    style: { top: '62.5%', left: '23%', width: '54%', height: '11%', borderRadius: '8px' },
+  },
+  {
+    id: 'left_leg',
+    label: '왼다리·발',
+    pin: { top: '82%', left: '34%' },
+    style: { top: '72.5%', left: '22%', width: '26%', height: '25%', borderRadius: '10px' },
+  },
+  {
+    id: 'right_leg',
+    label: '오른다리·발',
+    pin: { top: '82%', left: '66%' },
+    style: { top: '72.5%', left: '52%', width: '26%', height: '25%', borderRadius: '10px' },
+  },
 ];
 
-/* ── 뒷면 신체 부위 정의 ── */
-const BACK = [
-  { id: 'head',        label: '뒷머리',     shape: 'ellipse', cx: 80, cy: 28, rx: 24, ry: 26 },
-  { id: 'neck_back',   label: '목·어깨',   shape: 'rect', x: 44, y: 52,  w: 72, h: 22, rx: 8  },
-  { id: 'upper_back',  label: '등 위',     shape: 'rect', x: 46, y: 72,  w: 68, h: 46, rx: 8  },
-  { id: 'lower_back',  label: '허리',      shape: 'rect', x: 46, y: 116, w: 68, h: 40, rx: 8  },
-  { id: 'left_arm',    label: '왼팔',      shape: 'rect', x: 14, y: 52,  w: 26, h: 92, rx: 10 },
-  { id: 'right_arm',   label: '오른팔',    shape: 'rect', x: 120,y: 52,  w: 26, h: 92, rx: 10 },
-  { id: 'hip',         label: '엉덩이·골반', shape: 'rect', x: 44, y: 154, w: 72, h: 24, rx: 8  },
-  { id: 'left_leg',    label: '왼다리',    shape: 'rect', x: 44, y: 176, w: 32, h: 116,rx: 10 },
-  { id: 'right_leg',   label: '오른다리',  shape: 'rect', x: 84, y: 176, w: 32, h: 116,rx: 10 },
+const BACK_REGIONS = [
+  {
+    id: 'head',
+    label: '뒷머리',
+    pin: { top: '12%', left: '50%' },
+    style: { top: '2.5%', left: '35%', width: '30%', height: '19%', borderRadius: '50%' },
+  },
+  {
+    id: 'neck_back',
+    label: '목·어깨',
+    pin: { top: '25%', left: '50%' },
+    style: { top: '20%', left: '18%', width: '64%', height: '9%', borderRadius: '8px' },
+  },
+  {
+    id: 'upper_back',
+    label: '등 위',
+    pin: { top: '37%', left: '50%' },
+    style: { top: '28%', left: '26%', width: '48%', height: '17%', borderRadius: '8px' },
+  },
+  {
+    id: 'lower_back',
+    label: '허리',
+    pin: { top: '52%', left: '50%' },
+    style: { top: '44%', left: '28%', width: '44%', height: '18%', borderRadius: '8px' },
+  },
+  {
+    id: 'left_arm',
+    label: '왼팔',
+    pin: { top: '44%', left: '14%' },
+    style: { top: '25.5%', left: '5%', width: '22%', height: '42%', borderRadius: '24px' },
+  },
+  {
+    id: 'right_arm',
+    label: '오른팔',
+    pin: { top: '44%', left: '86%' },
+    style: { top: '25.5%', left: '73%', width: '22%', height: '42%', borderRadius: '24px' },
+  },
+  {
+    id: 'hip',
+    label: '엉덩이·골반',
+    pin: { top: '68%', left: '50%' },
+    style: { top: '62.5%', left: '23%', width: '54%', height: '11%', borderRadius: '8px' },
+  },
+  {
+    id: 'left_leg',
+    label: '왼다리',
+    pin: { top: '82%', left: '34%' },
+    style: { top: '72.5%', left: '22%', width: '26%', height: '25%', borderRadius: '10px' },
+  },
+  {
+    id: 'right_leg',
+    label: '오른다리',
+    pin: { top: '82%', left: '66%' },
+    style: { top: '72.5%', left: '52%', width: '26%', height: '25%', borderRadius: '10px' },
+  },
 ];
 
 export default function BodyDiagram({ front = true, selectedPart, onSelect }) {
-  const parts = front ? FRONT : BACK;
+  const regions = front ? FRONT_REGIONS : BACK_REGIONS;
+  const active  = regions.find((r) => r.id === selectedPart);
 
   return (
-    <svg
-      viewBox="0 0 160 300"
-      width="160"
-      height="300"
-      className={styles.bodySvg}
+    <div
+      className={styles.wrapper}
+      style={{ '--body-mask': `url(${import.meta.env.BASE_URL}body-silhouette.png)` }}
     >
-      {parts.map((part) => {
-        const active = selectedPart === part.id;
-        const fill   = active ? '#2563EB' : '#EFF6FF';
-        const stroke = active ? '#1D4ED8' : '#BFDBFE';
-        const color  = active ? '#fff'    : '#2563EB';
+      <div className={styles.container}>
+        {/* ── 실루엣 (CSS 마스크) ── */}
+        <div className={styles.silhouette} />
 
-        /* 텍스트 중심 좌표 */
-        const tx = part.shape === 'ellipse' ? part.cx : part.x + part.w / 2;
-        const ty = part.shape === 'ellipse' ? part.cy : part.y + part.h / 2;
-        const fs = part.h < 20 ? 8 : 8.5;
+        {/* ── 핫스팟 오버레이 (마스크 내부에서 클리핑) ── */}
+        <div className={styles.hotspots}>
+          {regions.map(({ id, style }) => (
+            <button
+              key={id}
+              className={[styles.region, selectedPart === id && styles.regionActive].filter(Boolean).join(' ')}
+              style={style}
+              onClick={() => onSelect(id === selectedPart ? null : id)}
+              aria-label={id}
+            />
+          ))}
+        </div>
 
-        return (
-          <g
-            key={part.id}
-            onClick={() => onSelect(part.id)}
-            className={styles.bodyPart}
-            role="button"
-            aria-label={part.label}
-          >
-            {part.shape === 'ellipse' ? (
-              <ellipse
-                cx={part.cx} cy={part.cy}
-                rx={part.rx} ry={part.ry}
-                fill={fill} stroke={stroke} strokeWidth="1.5"
-              />
-            ) : (
-              <rect
-                x={part.x} y={part.y}
-                width={part.w} height={part.h}
-                rx={part.rx}
-                fill={fill} stroke={stroke} strokeWidth="1.5"
-              />
-            )}
-            <text
-              x={tx} y={ty}
-              textAnchor="middle"
-              dominantBaseline="middle"
-              fontSize={fs}
-              fill={color}
-              fontWeight="600"
-              fontFamily="'Pretendard', sans-serif"
-              style={{ userSelect: 'none', pointerEvents: 'none' }}
+        {/* ── 핀 도트 (마스크 밖, 항상 보임) ── */}
+        <div className={styles.pins}>
+          {regions.map(({ id, pin }) => (
+            <span
+              key={id}
+              className={styles.pin}
+              style={{ top: pin.top, left: pin.left }}
             >
-              {part.label}
-            </text>
-          </g>
-        );
-      })}
-    </svg>
+              <span
+                className={[styles.pinDot, selectedPart === id && styles.pinDotActive].filter(Boolean).join(' ')}
+              />
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* ── 선택된 부위 라벨 ── */}
+      {active ? (
+        <div className={styles.selectedLabel}>
+          <MapPin size={12} />
+          {active.label}
+        </div>
+      ) : (
+        <p className={styles.emptyLabel}>부위를 탭해 증상을 선택하세요</p>
+      )}
+    </div>
   );
 }

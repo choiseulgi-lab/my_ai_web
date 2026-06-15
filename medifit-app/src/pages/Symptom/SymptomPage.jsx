@@ -113,7 +113,6 @@ export default function SymptomPage({ onBack, onNext }) {
 
             {/* 신체 SVG */}
             <BodyDiagram front={front} selectedPart={selectedPart} onSelect={handlePartSelect} />
-            <p className={styles.bodyHint}>부위를 탭하면 증상 목록이 나타나요</p>
 
             {/* 선택한 부위의 증상 목록 */}
             {selectedPart && BODY_SYMPTOMS[selectedPart] && (

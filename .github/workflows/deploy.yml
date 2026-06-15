@@ -49,6 +49,12 @@ jobs:
           npm install
           npm run build
 
+      - name: Build medifit-app
+        working-directory: medifit-app
+        run: |
+          npm install
+          npm run build
+
       - name: Prepare deployment directory
         run: |
           mkdir -p _site
@@ -61,6 +67,8 @@ jobs:
           cp -r lecture1/ulsan-bus/dist/. _site/ulsan-bus/
           mkdir -p _site/book-fair
           cp -r "book Fair/." _site/book-fair/
+          mkdir -p _site/medifit-app
+          cp -r medifit-app/dist/. _site/medifit-app/
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
